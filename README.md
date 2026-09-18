@@ -6,12 +6,8 @@ mapa geográfico interactivo con seguimiento del tren, planificador de ida y
 vuelta, próximos trenes, afluencia por franja horaria, avisos y un asistente
 que entiende lenguaje natural.
 
-El repositorio contiene **dos versiones**:
-
-| | Dónde | Qué es |
-|---|---|---|
-| **Aplicación** | [`web/`](web/) | Next.js + TypeScript + Tailwind + Framer Motion + Leaflet. Es lo que se publica. |
-| **Versión estática** | [`legacy/`](legacy/) | HTML, CSS y JS sin build ni dependencias. Se publica en `/clasico/`. |
+La aplicación vive en [`web/`](web/): Next.js + TypeScript + Tailwind +
+Framer Motion + Leaflet, exportada como sitio estático.
 
 > ⚠️ **Interfaz conceptual con fines académicos.** No representa el sitio oficial
 > de Línea 1 ni tiene relación con su operador. Los tiempos, frecuencias y
@@ -34,7 +30,7 @@ El repositorio contiene **dos versiones**:
 | Mapa | `mapa.html` | Esquema de la línea, buscador, ubicación, mapa geográfico (Leaflet) y listado por distrito |
 | Estación | `estacion.html?id=gamarra` | Trenes por sentido, afluencia, salidas numeradas, referencias cercanas, contiguas y planificador |
 
-### La aplicación (`web/`)
+### Funcionalidades
 
 - 🗺️ **Mapa geográfico real** (Leaflet + OpenStreetMap) con las 26 estaciones,
   el trazado de la línea y etiquetas de las avenidas principales.
@@ -52,32 +48,6 @@ El repositorio contiene **dos versiones**:
 - 📱 **Mobile first**: navegación inferior y panel del viaje como hoja
   deslizable.
 
-### La versión estática (raíz)
-
-- 🧭 **Planificador protagonista** — tarjeta flotante sobre el hero, con inversión
-  de origen/destino y detección de ubicación.
-- 🎬 **Resultado animado** — skeleton de carga, recorrido que se dibuja
-  progresivamente, cuatro métricas, «Ver detalle de la ruta» expandible e
-  **Iniciar viaje** con cuenta atrás en vivo hasta la llegada.
-- 🗺️ **Mapa interactivo real** — las 26 estaciones son botones. Al tocar una:
-  halo animado, ficha con próximos trenes y afluencia, y botones para elegirla
-  como **origen** o **destino**. Con una ruta activa, el tramo se ilumina, el
-  resto baja de opacidad y un tren recorre el trayecto.
-- 🚆 **Próximos trenes** en ambos sentidos, con estado (*En plataforma*,
-  *Llegando*, *En camino*) y actualización cada 15 s.
-- 📊 **Afluencia por hora** — al pasar o tocar una barra se muestra la hora, el
-  nivel y el porcentaje estimado de ocupación, más la mejor franja del día.
-- ✦ **Asistente** que responde rutas, horarios, tarifas, afluencia y llegadas del
-  tipo *«llegar a Gamarra antes de las 9:30 desde San Borja Sur»*, con animación
-  de «escribiendo», tarjeta de ruta y botón **Ver en el mapa**. Todo en el
-  navegador: sin servidor y sin clave de API.
-- 📍 **Estaciones cercanas** con distancia y minutos caminando.
-- 💳 **Mi tarjeta** con saldo y viajes disponibles calculados sobre la tarifa.
-- 🚦 **Estado del servicio** siempre visible en la barra; cuando hay incidencia
-  aparece una banda superior con el tramo afectado.
-- 🏷️ **Procedencia de cada dato** — 🟢 tiempo real, 🟣 estimación, ⚪ demostración.
-- 📱 **Mobile first de verdad** — barra inferior fija, mapa con scroll lateral,
-  tarjetas en una columna, PWA instalable con service worker.
 
 ## Cómo ejecutarlo
 
@@ -90,33 +60,25 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-**La versión estática**, sin build ni dependencias:
-
-```bash
-cd legacy && python3 -m http.server 8000
-```
-
 ## Despliegue
 
-**GitHub Pages** — configurado en `.github/workflows/pages.yml`: construye la
-app de `web/` y publica la versión estática en `/clasico/`. En
-*Settings → Pages* elige `GitHub Actions`.
+**GitHub Pages** — configurado en `.github/workflows/pages.yml`: construye
+`web/` y publica `web/out`. En *Settings → Pages* elige `GitHub Actions`.
 
 **Vercel** — importa el repositorio tal cual. El `vercel.json` de la raíz ya
 indica que debe construir `web/` y publicar `web/out`; no hace falta tocar el
 *Root Directory*.
 
-> La versión estática vivía antes en la raíz, y Vercel la servía en lugar de la
-> aplicación. Por eso está ahora en `legacy/`: en la raíz no queda ningún
-> `index.html` que pueda tomarse por el sitio.
+> Ojo con `vercel.json`: no debe llevar `trailingSlash` ni `cleanUrls`.
+> `next.config.ts` ya genera las rutas con barra final, y repetirlo en Vercel
+> hace que también se redirijan los `.css` y `.js`, que pasan a dar 404 y la
+> página se queda sin estilos.
 
 ## Estructura
 
 ```
 web/                    Aplicación Next.js (ver web/README.md)
 vercel.json             Le dice a Vercel que construya web/
-legacy/                 Versión estática anterior, sin build
-legacy/index.html       Portada de la versión estática
 mapa.html               Mapa esquemático + geográfico
 estacion.html           Ficha de estación (?id=…)
 manifest.webmanifest    Configuración PWA
@@ -131,7 +93,6 @@ assets/
   js/estacion.js        Ficha de estación
   js/mapa.js            Mapa, buscador y ubicación
   img/hero-tren.svg     Ilustración del hero (sustituible por foto)
-tools/generar_iconos.py Genera los PNG de la PWA sin dependencias
 docs/                   Datos, arquitectura y guía de diseño
 ```
 

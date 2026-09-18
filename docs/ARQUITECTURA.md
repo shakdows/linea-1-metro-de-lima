@@ -123,8 +123,9 @@ create table afluencia_historica (
 
 ## La aplicación de `web/`
 
-Desde la versión con mapa geográfico, el proyecto tiene dos implementaciones
-que comparten modelo de datos y lenguaje visual.
+La aplicación que se publica vive en `web/`. Las secciones anteriores de este
+documento describen la primera versión, hecha sin build, que sirvió de
+prototipo y ya no forma parte del despliegue.
 
 ```
 web/

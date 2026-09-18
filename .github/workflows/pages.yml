@@ -37,12 +37,9 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build
 
-      - name: Añadir la versión estática en /clasico
-        run: |
-          mkdir -p web/out/clasico
-          cp -r legacy/. web/out/clasico/
-          # GitHub Pages ignora las carpetas que empiezan por guion bajo (_next)
-          touch web/out/.nojekyll
+      - name: Preparar la publicación
+        # GitHub Pages ignora las carpetas que empiezan por guion bajo (_next)
+        run: touch web/out/.nojekyll
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
