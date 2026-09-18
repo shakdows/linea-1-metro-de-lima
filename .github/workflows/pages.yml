@@ -37,17 +37,17 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build
 
-      - name: Reajustar la versión anterior al subdirectorio de Pages
-        # `public/anterior/` es una copia ya construida: sus rutas se fijaron
+      - name: Reajustar el rediseño archivado al subdirectorio de Pages
+        # `public/rediseno/` es una copia ya construida: sus rutas se fijaron
         # para un dominio servido desde la raíz (Vercel). En Pages el sitio
         # cuelga de /<repo>/, así que hay que anteponerlo. El cambio se limita
         # a esa carpeta, no toca la aplicación actual.
         env:
           BASE_PATH: /${{ github.event.repository.name }}
         run: |
-          grep -rlZ -e '/anterior/' -e '/estaciones/' -e '/img/' web/out/anterior \
+          grep -rlZ -e '/rediseno/' -e '/estaciones/' -e '/img/' web/out/rediseno \
             | xargs -0 --no-run-if-empty sed -i \
-                -e "s#\"/anterior/#\"$BASE_PATH/anterior/#g" \
+                -e "s#\"/rediseno/#\"$BASE_PATH/rediseno/#g" \
                 -e "s#\"/estaciones/#\"$BASE_PATH/estaciones/#g" \
                 -e "s#\"/img/#\"$BASE_PATH/img/#g"
 

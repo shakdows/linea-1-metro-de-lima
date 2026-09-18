@@ -1,8 +1,8 @@
 # Arquitectura
 
-La aplicación que se publica vive en [`web/`](../web/). La primera versión del
-proyecto, hecha con HTML y JavaScript sin build, sirvió de prototipo y se
-conserva archivada en `web/public/clasico/`, publicada en `/clasico/`.
+La aplicación que se publica vive en [`web/`](../web/). Las dos versiones que
+no están en uso —la primera, en HTML y JavaScript sin build, y un rediseño que
+se exploró y se descartó— se conservan archivadas dentro de `web/public/`.
 
 ```
 web/
@@ -14,13 +14,13 @@ web/
 └── Leaflet + OSM   → mapa geográfico
 ```
 
-## Dos rutas
+## Las rutas
 
 | Ruta | Qué es |
 |---|---|
-| `/` | Portada. La única página con desplazamiento y secciones: presenta el proyecto, muestra los módulos y el trazado, y lleva a la aplicación |
+| `/` | Portada. La única página con desplazamiento y secciones: presenta el proyecto, muestra qué incluye y el trazado, y lleva a la aplicación |
 | `/app/` | La aplicación. No se comporta como una página |
-| `/anterior/` | La disposición previa de la aplicación, ya construida y archivada |
+| `/rediseno/` | Un rediseño explorado y descartado, ya construido y archivado |
 | `/clasico/` | La primera versión, archivada: se sirve tal cual desde `public/`, sin pasar por Next |
 
 La separación es deliberada: entrar directamente al espacio de trabajo dejaba
@@ -28,39 +28,39 @@ al visitante sin contexto y hacía que la herramienta pareciera una web a medio
 hacer. La portada explica qué es y quién lo hizo; la aplicación no tiene que
 explicar nada.
 
-## Un armazón, ocho módulos
+## El mapa en el centro
 
-Dentro de `/app/` no hay páginas: hay un **armazón persistente** y un área de
-trabajo que se reemplaza.
+Dentro de `/app/` no hay páginas. El mapa ocupa el centro y **nunca se
+abandona**; lo que cambia es el panel de la izquierda.
 
 ```
-AppShell
-├── Sidebar      (212 px, fija, oscura)   ── no se desmonta
-├── Topbar       (56 px: buscador, estado, avisos)
-├── main         ── AnimatePresence, 160 ms de fundido por módulo
-│    └── HomeWorkspace │ MapWorkspace │ PlanWorkspace │ StationsWorkspace
-│        CardWorkspace │ ScheduleWorkspace │ AlertsWorkspace │ AssistantWorkspace
-└── MobileTabs   (52 px, solo móvil: 4 pestañas + hoja «Más»)
+app/app/page.tsx
+├── Sidebar      (228 px, fija, oscura)   ── elige la sección
+├── Header       (buscador, estado del servicio, avisos)
+├── panel izquierdo ── Planner │ TripPanel │ StationPanel │ StationList
+│                      SidePanels (trenes, afluencia, tarjeta, avisos, asistente)
+├── MetroMap     ── ocupa el resto, siempre montado
+└── MobileNav + MobileSheet   (solo móvil)
 
-StationDrawer    ── cajón lateral derecho, por encima del armazón
+StationDrawer    ── ficha de estación a pantalla lateral
 ```
 
-`app/app/page.tsx` es el único dueño del estado: módulo activo, reloj, estación
+`app/app/page.tsx` es el único dueño del estado: sección activa, reloj, estación
 inspeccionada, señales de dibujo del mapa y —a través de `useTrip`— todo el
-viaje. Los módulos reciben lo que necesitan por props y no hablan entre sí.
+viaje. Los componentes reciben lo que necesitan por props y no hablan entre sí.
 
-Esa elevación del estado es lo que permite que una ruta calculada en Inicio, o
-propuesta por el asistente, ya esté cargada al abrir el mapa: nadie recalcula
-nada, solo cambia el módulo visible.
+Esa elevación del estado es lo que permite que el mapa no se desmonte nunca: al
+cambiar de sección solo se sustituye el contenido del panel, y el tren sigue
+circulando.
 
-### Por qué un cajón lateral y no un modal
+### Por qué el mapa no se abandona
 
-El inspector de estación (`StationDrawer`) entra desde la derecha y deja el
-mapa o el listado visibles. Un modal centrado obligaría a cerrarlo para
-recordar de dónde venías; el cajón conserva el contexto, que es lo que hace una
-herramienta de trabajo y no una web de consulta.
+Se probó lo contrario —un panel de operación con un módulo a la vez y el mapa
+como una sección más— y se archivó en `/rediseno/`. En una aplicación de
+movilidad el mapa es el contexto, no un contenido: sacarlo de la vista obliga a
+reconstruir mentalmente dónde estás cada vez que vuelves.
 
-## Capas de datos
+## Capas de datos## Capas de datos
 
 | Capa | Archivos | Responsabilidad |
 |---|---|---|
@@ -69,7 +69,7 @@ herramienta de trabajo y no una web de consulta.
 | **Estado** | `hooks/useTrip.ts`, `hooks/useTrainAnimation.ts`, `hooks/useGeolocation.ts` | Selección, máquina de estados del viaje, animación, ubicación |
 | **Vista** | `components/**` | Sin cálculos propios: todo lo que muestran viene derivado de arriba |
 
-Cambiar una constante de `data/` se propaga por sí solo a todos los módulos.
+Cambiar una constante de `data/` se propaga por sí solo a toda la interfaz.
 
 ## Dos decisiones que conviene entender
 
@@ -108,14 +108,13 @@ leen datos en Server Components.
 
 ## Las versiones archivadas
 
-`/anterior/` y `/clasico/` son archivos estáticos dentro de `public/`, así que
+`/rediseno/` y `/clasico/` son archivos estáticos dentro de `public/`, así que
 Next no los procesa: se copian al `out/` tal cual.
 
-De `/anterior/` conviene saber dos cosas:
+De `/rediseno/` conviene saber dos cosas:
 
-- **Es una copia ya construida** del commit `f728763`, no código que se
-  recompile. Sus rutas internas llevan el prefijo `/anterior`, fijado en el
-  momento de construirla, así que solo encajan si el sitio se sirve desde la
+- **Es una copia ya construida**, no código que se recompile. Sus rutas
+  internas llevan el prefijo `/rediseno`, fijado en el momento de construirla, así que solo encajan si el sitio se sirve desde la
   raíz del dominio. El flujo de GitHub Pages las reajusta con un `sed` acotado
   a esa carpeta antes de publicar.
 - **Su banda de aviso cuelga de `<html>`, no de `<body>`.** React hidrata los

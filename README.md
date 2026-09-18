@@ -12,7 +12,7 @@ vuelta, catálogo de estaciones, tarjeta, horarios, avisos y asistente.
 |---|---|
 | `/` | Portada: qué hace el proyecto, los módulos, el trazado animado y el botón de entrada |
 | `/app/` | La aplicación |
-| `/anterior/` | La disposición previa de la aplicación, antes del rediseño |
+| `/rediseno/` | Un rediseño explorado y descartado: panel de operación, un módulo a la vez |
 | `/clasico/` | La primera versión del proyecto, en HTML y JS sin build |
 
 La aplicación vive en [`web/`](web/): Next.js + TypeScript + Tailwind CSS +
@@ -25,21 +25,21 @@ Framer Motion + Leaflet, exportada como sitio estático.
 
 ---
 
-## Los módulos (dentro de `/app/`)
+## Cómo está montada la aplicación (`/app/`)
 
-Un único armazón (`AppShell`) y ocho áreas de trabajo. La barra lateral y la
-superior no se desmontan nunca; solo cambia el centro.
+El mapa ocupa el centro y **nunca se abandona**. Lo que cambia es el panel de la
+izquierda, según la sección elegida en la barra lateral.
 
-| Módulo | Qué resuelve |
+| Sección | Qué muestra en el panel |
 |---|---|
-| **Inicio** | Centro de operaciones personal: saludo, planificador, próximos trenes desde tu estación de referencia, afluencia, accesos guardados y la línea de extremo a extremo |
-| **Mapa** | El mapa ocupa toda el área útil. Controles flotantes y, durante el viaje, un HUD inferior con progreso y mandos |
-| **Planificar viaje** | Formulario arriba y los dos tramos —ida y vuelta— en paralelo, con la secuencia de paradas |
-| **Estaciones** | Catálogo denso con fotografía, distrito, avenida, distintivos y próximo tren; filtros por zona y búsqueda |
-| **Tarjeta** | Tarjeta de demostración y tabla de movimientos |
-| **Horarios** | Tabla profesional por estación, sentido y tipo de día |
-| **Avisos** | Centro de incidencias: lista cronológica a la izquierda, detalle a la derecha |
-| **Asistente** | Conversación a la izquierda; a la derecha, la ruta que menciona la pregunta, con un botón que la carga en el mapa real |
+| **Inicio** | Planificador, rutas frecuentes y, durante el viaje, el progreso y la estación actual |
+| **Mapa** | El mapa a pantalla completa con sus controles |
+| **Planificar viaje** | Origen, destino, modo y el detalle del tramo calculado |
+| **Estaciones** | Las 26 estaciones con fotografía, buscables |
+| **Tarjeta** | Saldo, viajes disponibles y accesos |
+| **Horarios** | Primer y último tren, y la frecuencia por franja |
+| **Avisos** | Estado del servicio y avisos vigentes |
+| **Asistente** | Preguntas en lenguaje natural sobre rutas, horarios y tarifas |
 
 ### Cómo se comporta
 
@@ -51,13 +51,12 @@ superior no se desmontan nunca; solo cambia el centro.
 - 🎛️ **Control del viaje**: iniciar, pausar, continuar, finalizar, reiniciar e
   **iniciar la vuelta** (el tren cambia a azul y gira).
 - 🟢🔵 **Ida y vuelta** con ruta verde y azul, y el resto de la línea atenuado.
-- 🔎 **Inspector de estación**: al tocar una estación —en el mapa, en el
-  catálogo, en el buscador o en el diagrama de Inicio— se abre un cajón lateral
-  derecho, no un modal que tape el contexto.
+- 📍 **Selección desde el mapa**: al tocar una estación se abre su ficha con
+  próximos trenes, afluencia, avenida y botones de origen y destino.
 - 🎯 Zoom automático al tramo elegido y botón para ver toda la línea.
 - 🧭 **Mi ubicación** con la estación más cercana.
-- 📱 **Móvil**: cuatro pestañas inferiores y una hoja «Más» con el resto de
-  módulos; ningún módulo queda inalcanzable.
+- 📱 **Móvil**: el mapa ocupa la pantalla y el contenido vive en una hoja
+  inferior arrastrable, con navegación inferior.
 
 No hay botones decorativos: cada control está ligado a un estado real.
 
@@ -95,7 +94,7 @@ indica que debe construir `web/` y publicar `web/out`; no hace falta tocar el
 
 ```
 web/                    Portada y aplicación en Next.js (ver web/README.md)
-  public/anterior/      La disposición previa, ya construida (archivo)
+  public/rediseno/      El rediseño descartado, ya construido (archivo)
   public/clasico/       La primera versión, en HTML y JS sin build (archivo)
 vercel.json             Le dice a Vercel que construya web/
 docs/                   Datos, arquitectura, guía de activos y arquetipo de usuario
@@ -104,25 +103,26 @@ fotos linea 1/          Fotografías originales de las estaciones
 
 ## Las versiones archivadas
 
-Nada se descarta: las dos versiones anteriores siguen publicadas y enlazadas
-desde el pie de la portada.
+Nada se descarta: las dos versiones que no están en uso siguen publicadas y
+enlazadas desde el pie de la portada.
 
-### `/anterior/` — la disposición previa de la aplicación
+### `/rediseno/` — el rediseño descartado
 
-El diseño que tenía antes de este rediseño: barra lateral oscura, un panel a la
-vez y el mapa a la derecha. Es una **copia ya construida** del commit `f728763`,
-guardada en `web/public/anterior/`, así que se sirve tal cual sin volver a
-compilarse.
+Una exploración que convertía la aplicación en un panel de operación: un módulo
+a la vez en el centro, sin mapa permanente. Se probó y se volvió a la
+disposición actual, en la que el mapa nunca se abandona. Es una **copia ya
+construida**, guardada en `web/public/rediseno/`, así que se sirve tal cual sin
+recompilarse.
 
-Solo se le añadió, por JavaScript, una banda superior que avisa de que es una
-versión anterior y enlaza a la actual. Se inserta colgando de `<html>` y no de
-`<body>`: React hidrata los hijos de `body` y borraría cualquier nodo que no
-haya generado él.
+Solo se le añadió, por JavaScript, una banda superior que avisa de lo que es y
+enlaza a la versión actual. Se inserta colgando de `<html>` y no de `<body>`:
+React hidrata los hijos de `body` y borraría cualquier nodo que no haya
+generado él.
 
-Comparte con la versión actual las fotografías de `/estaciones/` y `/img/`, así
-que no se duplican. Sus rutas internas se fijaron para un dominio servido desde
-la raíz; el flujo de GitHub Pages las reajusta al subdirectorio del repositorio
-antes de publicar.
+Comparte las fotografías de `/estaciones/` con la versión actual, así que no se
+duplican. Sus rutas internas se fijaron para un dominio servido desde la raíz;
+el flujo de GitHub Pages las reajusta al subdirectorio del repositorio antes de
+publicar.
 
 ### `/clasico/` — la primera versión
 

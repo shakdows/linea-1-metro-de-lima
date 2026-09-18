@@ -1,16 +1,17 @@
 # Línea 1 — portada y aplicación
 
-Dos rutas, ambas exportadas como HTML estático:
+Dos rutas propias, más dos versiones archivadas, todas exportadas como HTML
+estático:
 
 | Ruta | Archivo | Qué es |
 |---|---|---|
 | `/` | `app/page.tsx` | Portada: presenta el proyecto y lleva a la aplicación |
-| `/app/` | `app/app/page.tsx` | La aplicación: barra lateral fija, barra superior y un área central que cambia de módulo sin recargar |
-| `/anterior/` | `public/anterior/` | La disposición previa de la aplicación, ya construida y servida tal cual |
-| `/clasico/` | `public/clasico/` | La primera versión del proyecto, servida tal cual desde `public/` |
+| `/app/` | `app/app/page.tsx` | La aplicación: el mapa en el centro y un panel que cambia de sección |
+| `/rediseno/` | `public/rediseno/` | Un rediseño explorado y descartado, ya construido |
+| `/clasico/` | `public/clasico/` | La primera versión del proyecto, en HTML y JS sin build |
 
-La portada es la única página con desplazamiento y secciones. Todo lo demás
-vive dentro de `/app/`, que no se comporta como una página.
+La portada es la única página con desplazamiento y secciones. La aplicación no
+se comporta como una página: el mapa nunca se abandona.
 
 ## Ejecutar
 
@@ -35,43 +36,38 @@ app/
   page.tsx              Portada
   app/
     layout.tsx          Metadatos de la aplicación
-    page.tsx            Estado compartido y elección del módulo activo
+    page.tsx            Estado compartido y composición de la aplicación
 components/
-  landing/
-    LineaDiagrama.tsx   El trazado real proyectado a SVG, con el tren recorriéndolo
-  shell/
-    AppShell.tsx        Armazón persistente; solo se reemplaza el centro
-    navigation.ts       Definición de los ocho módulos
-    Sidebar.tsx         Navegación lateral (escritorio)
-    Topbar.tsx          Buscador de estaciones, estado del servicio, avisos
-    MobileTabs.tsx      Cuatro pestañas inferiores y hoja «Más»
-  modules/
-    HomeWorkspace.tsx     Inicio: centro de operaciones personal
-    MapWorkspace.tsx      Mapa a pantalla completa, controles y TripHUD
-    PlanWorkspace.tsx     Planificador con los dos tramos en paralelo
-    TripPlanner.tsx       Origen, destino, modo y cálculo (se reutiliza)
-    RouteSummary.tsx      Resumen del tramo y secuencia de paradas
-    StationsWorkspace.tsx Catálogo de estaciones con filtros y fotografía
-    CardWorkspace.tsx     Tarjeta y tabla de movimientos
-    ScheduleWorkspace.tsx Tabla de horarios por estación y sentido
-    AlertsWorkspace.tsx   Centro de incidencias con panel de detalle
-    AssistantWorkspace.tsx Chat a la izquierda, contexto de ruta a la derecha
+  Sidebar.tsx           Navegación lateral (escritorio)
+  MobileNav.tsx         Navegación inferior (móvil)
+  Header.tsx            Buscador de estaciones y avenidas, estado del servicio
+  Planner.tsx           Origen, destino, modo y cálculo de la ruta
   MetroMap.tsx          Mapa Leaflet: línea, estaciones, avenidas y tren
-  StationDrawer.tsx     Inspector de estación: cajón lateral derecho
-  ui.tsx                Panel, PanelHeader, Pill, Button, Stat, Empty
+  TripPanel.tsx         Progreso del viaje, estación actual y seguimiento
+  TripControls.tsx      Iniciar, pausar, continuar, finalizar, reiniciar, vuelta
+  StationPanel.tsx      Ficha de estación en el panel
+  StationDrawer.tsx     Ficha de estación a pantalla lateral, con fotografía
+  StationPopup.tsx      Tarjeta al pasar el puntero sobre una estación del mapa
+  StationList.tsx       Las 26 estaciones con foto, buscables
+  SidePanels.tsx        Próximos trenes, afluencia, tarjeta, avisos y asistente
+  ArrivalToast.tsx      Aviso de llegada a cada estación
+  MobileSheet.tsx       Hoja inferior arrastrable en móvil
+  Card.tsx              Superficie base y cabecera de tarjeta
+  landing/
+    LineaDiagrama.tsx   El trazado real proyectado a SVG, para la portada
 public/
   estaciones/           Fotografías de 21 de las 26 estaciones (WebP)
-  img/                  Fotografías de tren y viaducto que usa /anterior/
-  anterior/             La disposición previa de la aplicación, ya construida
-  clasico/              La primera versión del proyecto, archivada
+  img/                  Fotografías de tren y viaducto de la barra lateral
+  rediseno/             El rediseño descartado, ya construido (archivo)
+  clasico/              La primera versión del proyecto (archivo)
 data/
   stations.ts           Las 26 estaciones, frecuencias, afluencia y avisos
   route.ts              Trazado, avenidas, interpolación, rumbo y distancias
-  card.ts               Tarjeta de demostración y movimientos
 hooks/
   useTrip.ts            Selección, cálculo de la ruta y estados del viaje
   useTrainAnimation.ts  Movimiento del tren parada a parada
   useGeolocation.ts     Ubicación bajo demanda y estación más cercana
+  useIsDesktop.ts       Monta el panel de escritorio o la hoja de móvil, no ambos
 lib/
   trip.ts               Tramos, próximos trenes, afluencia y formatos de hora
   assistant.ts          Asistente por reglas sobre los datos locales
@@ -90,25 +86,22 @@ Esto tiene dos consecuencias:
 - El recorrido **no es una animación fija**: se deriva del tramo elegido, así
   que cambiar origen o destino cambia el trayecto, el sentido y la duración.
 
-## La aplicación cambia de módulo, no de página
+## La aplicación cambia de estado, no de página
 
-`AppShell` mantiene montadas la barra lateral y la superior; solo el área
-central se reemplaza, con una transición de 160 ms. El estado del viaje vive en
-`page.tsx`, por encima de los módulos: por eso una ruta calculada en Inicio o
-propuesta por el asistente ya está cargada al abrir el mapa.
+El mapa ocupa el centro y nunca se abandona. Lo que cambia es el panel de la
+izquierda, según la sección elegida en la barra lateral: planificador,
+estaciones, tarjeta, avisos, horarios o asistente. Al iniciar un viaje, el panel
+pasa a mostrar el progreso y la estación actual.
 
-Las estaciones se inspeccionan en un **cajón lateral derecho**, no en un modal
-centrado, para no perder de vista el mapa o la lista de la que vienes.
-
-En móvil hay cuatro pestañas inferiores —Inicio, Mapa, Viaje, Estaciones— y una
-hoja «Más» con Tarjeta, Horarios, Avisos y Asistente.
+En móvil no se encoge esa disposición: el mapa ocupa la pantalla y el contenido
+vive en una hoja inferior arrastrable.
 
 ## Estados del viaje
 
 `idle → ready → traveling ⇄ paused → station-stop → completed → return-ready →
 returning → finished`
 
-Cada mando del `TripHUD` está ligado a un estado concreto: no hay botones
+Cada botón de `TripControls` está ligado a un estado concreto: no hay botones
 decorativos.
 
 ## Detalles que conviene no romper
@@ -126,6 +119,8 @@ decorativos.
   `ref`. Un `ref` no provoca re-render, así que sin ese estado los efectos
   corrían una sola vez —antes de que resolviera el import dinámico de Leaflet—
   y las estaciones nunca se dibujaban.
+- **`useIsDesktop`**: monta el panel de escritorio o la hoja de móvil, nunca los
+  dos. Montarlos a la vez duplicaba los `id` de los campos del formulario.
 
 ## Notas sobre los datos
 

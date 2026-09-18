@@ -16,7 +16,7 @@ const APP = "/app/";
    (que no son rutas de Next) necesitan el prefijo a mano */
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const CLASICO = `${BASE}/clasico/index.html`;
-const ANTERIOR = `${BASE}/anterior/index.html`;
+const REDISENO = `${BASE}/rediseno/index.html`;
 
 const CIFRAS = [
   { valor: STATIONS.length, etiqueta: "estaciones" },
@@ -354,10 +354,10 @@ function Pie() {
             </p>
             <ul className="space-y-1 text-[11.5px] text-tinta-suave">
               <li>
-                <a href={ANTERIOR} className="font-medium text-tinta underline decoration-borde underline-offset-4 transition-colors hover:decoration-verde">
-                  Disposición previa de la aplicación
+                <a href={REDISENO} className="font-medium text-tinta underline decoration-borde underline-offset-4 transition-colors hover:decoration-verde">
+                  Rediseño tipo panel de operación
                 </a>
-                <span className="ml-1.5 opacity-80">— antes del rediseño.</span>
+                <span className="ml-1.5 opacity-80">— un módulo a la vez, sin mapa permanente.</span>
               </li>
               <li>
                 <a href={CLASICO} className="font-medium text-tinta underline decoration-borde underline-offset-4 transition-colors hover:decoration-verde">
