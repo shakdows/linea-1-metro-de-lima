@@ -118,3 +118,40 @@ create table afluencia_historica (
 - Modo oscuro: las variables CSS ya están centralizadas, solo falta el bloque
   `@media (prefers-color-scheme: dark)`.
 - Traducción a quechua e inglés.
+
+---
+
+## La aplicación de `web/`
+
+Desde la versión con mapa geográfico, el proyecto tiene dos implementaciones
+que comparten modelo de datos y lenguaje visual.
+
+```
+web/
+├── Next.js 16 (App Router, exportación estática)
+├── TypeScript
+├── Tailwind CSS v4 (tokens en @theme)
+├── Framer Motion   → transiciones y posición del tren
+├── Lucide          → iconografía
+└── Leaflet + OSM   → mapa geográfico
+```
+
+**Por qué exportación estática.** `output: "export"` genera HTML, CSS y JS
+planos en `web/out`: se publica en GitHub Pages o en Vercel sin servidor, y
+mantiene la promesa del proyecto de no necesitar infraestructura. Cuando haga
+falta datos en vivo, basta con quitar esa línea y convertir los paneles en
+Server Components.
+
+**Una decisión que conviene entender.** La posición del tren no vive en el
+estado de React sino en un `MotionValue`. Si viviera en el estado, cada
+fotograma provocaría un render del árbol completo. Al ser un `MotionValue`,
+`MetroMap` se suscribe con `position.on("change", …)` y mueve el marcador de
+Leaflet directamente: React solo vuelve a renderizar en eventos discretos
+(llegada a una estación, pausa, fin del tramo).
+
+**Hidratación y relojes.** El HTML se genera en el build, con la hora de esa
+máquina. Cualquier `new Date()` en el primer render produce un desajuste al
+hidratar. Por eso el reloj arranca en una hora fija (`CLOCK_FALLBACK`) y se
+pone en hora dentro de un `useEffect`, y las horas se formatean a mano en lugar
+de con `toLocaleTimeString`, que usa separadores distintos en Node y en el
+navegador.

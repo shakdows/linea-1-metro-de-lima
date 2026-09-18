@@ -15,16 +15,46 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Instalar dependencias
+        working-directory: web
+        run: npm ci
+
+      - name: Construir la aplicación
+        working-directory: web
+        # En GitHub Pages el sitio cuelga de /<repo>/, no de la raíz del dominio
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}
+        run: npm run build
+
+      - name: Añadir la versión estática en /clasico
+        run: |
+          mkdir -p web/out/clasico
+          cp -r index.html mapa.html estacion.html manifest.webmanifest sw.js robots.txt assets web/out/clasico/
+          # GitHub Pages ignora las carpetas que empiezan por guion bajo (_next)
+          touch web/out/.nojekyll
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/out
+
   desplegar:
+    needs: construir
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
       - id: deployment
         uses: actions/deploy-pages@v4

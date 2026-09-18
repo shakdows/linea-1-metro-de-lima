@@ -1,10 +1,17 @@
 # Línea 1 — Metro de Lima
 
-Concepto de **web-app de movilidad** para la Línea 1 del Metro de Lima. No es
-una web institucional: es la herramienta con la que un pasajero resuelve su
-viaje — planificador, mapa interactivo de las 26 estaciones, próximos trenes,
-afluencia por franja horaria, avisos y un asistente que entiende lenguaje
-natural.
+Aplicación web de movilidad para la Línea 1 del Metro de Lima. No es una web
+institucional: es la herramienta con la que un pasajero resuelve su viaje —
+mapa geográfico interactivo con seguimiento del tren, planificador de ida y
+vuelta, próximos trenes, afluencia por franja horaria, avisos y un asistente
+que entiende lenguaje natural.
+
+El repositorio contiene **dos versiones**:
+
+| | Dónde | Qué es |
+|---|---|---|
+| **Aplicación** | [`web/`](web/) | Next.js + TypeScript + Tailwind + Framer Motion + Leaflet. Es lo que se publica. |
+| **Versión estática** | raíz del repo | HTML, CSS y JS sin build ni dependencias. Se publica en `/clasico/`. |
 
 > ⚠️ **Interfaz conceptual con fines académicos.** No representa el sitio oficial
 > de Línea 1 ni tiene relación con su operador. Los tiempos, frecuencias y
@@ -27,7 +34,25 @@ natural.
 | Mapa | `mapa.html` | Esquema de la línea, buscador, ubicación, mapa geográfico (Leaflet) y listado por distrito |
 | Estación | `estacion.html?id=gamarra` | Trenes por sentido, afluencia, salidas numeradas, referencias cercanas, contiguas y planificador |
 
-### Funcionalidades
+### La aplicación (`web/`)
+
+- 🗺️ **Mapa geográfico real** (Leaflet + OpenStreetMap) con las 26 estaciones,
+  el trazado de la línea y etiquetas de las avenidas principales.
+- 🚆 **Tren animado sobre coordenadas reales**: interpola entre estaciones, se
+  orienta según el rumbo, se detiene 800 ms en cada parada y marca con ✓ las
+  estaciones ya recorridas. El recorrido se calcula, no está grabado.
+- 🎛️ **Control total del viaje**: iniciar, pausar, continuar, finalizar,
+  reiniciar e **iniciar la vuelta** (el tren cambia a azul y gira).
+- 🟢🔵 **Ida y vuelta** con ruta verde y azul, y el resto de la línea atenuado.
+- 📍 **Selección desde el mapa**: al tocar una estación se abre su ficha con
+  próximos trenes, afluencia, avenida y botones de origen y destino.
+- 🎯 **Zoom automático** al tramo elegido y botón para ver toda la línea.
+- 🧭 **Mi ubicación** con la estación más cercana y los minutos caminando.
+- 📊 Próximos trenes, afluencia por franja horaria, tarjeta, avisos y asistente.
+- 📱 **Mobile first**: navegación inferior y panel del viaje como hoja
+  deslizable.
+
+### La versión estática (raíz)
 
 - 🧭 **Planificador protagonista** — tarjeta flotante sobre el hero, con inversión
   de origen/destino y detección de ubicación.
@@ -56,31 +81,35 @@ natural.
 
 ## Cómo ejecutarlo
 
-No hay build ni dependencias. Basta con servir la carpeta:
+**La aplicación** (Next.js):
 
 ```bash
 git clone https://github.com/shakdows/linea-1-metro-de-lima.git
-cd linea-1-metro-de-lima
-python3 -m http.server 8000     # o: npx serve .
+cd linea-1-metro-de-lima/web
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Abre <http://localhost:8000>.
+**La versión estática**, sin build ni dependencias:
 
-> Abrir `index.html` con doble clic también funciona, pero el service worker
-> y la geolocalización requieren `http://` o `https://`.
+```bash
+python3 -m http.server 8000     # desde la raíz del repo
+```
 
 ## Despliegue
 
-**GitHub Pages** — ya configurado en `.github/workflows/pages.yml`. En
+**GitHub Pages** — configurado en `.github/workflows/pages.yml`: construye la
+app de `web/` y publica la versión estática en `/clasico/`. En
 *Settings → Pages* elige `GitHub Actions`.
 
-**Vercel** — importa el repositorio, framework *Other*, sin comando de build y
-con `.` como directorio de salida.
+**Vercel** — importa el repositorio y pon `web` como *Root Directory*. El resto
+lo detecta solo.
 
 ## Estructura
 
 ```
-index.html              Portada
+web/                    Aplicación Next.js (ver web/README.md)
+index.html              Portada de la versión estática
 mapa.html               Mapa esquemático + geográfico
 estacion.html           Ficha de estación (?id=…)
 manifest.webmanifest    Configuración PWA
