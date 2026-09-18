@@ -2,18 +2,21 @@
 
 Aplicación web de movilidad para la Línea 1 del Metro de Lima.
 
-Son **dos piezas**: una portada que presenta el proyecto y un botón «Entrar», y
-detrás la aplicación propiamente dicha —un **espacio de trabajo** con barra
+La dirección principal abre la aplicación directamente —un **espacio de
+trabajo** con barra
 lateral fija, barra superior y un área central que cambia de módulo sin
 recargar: mapa geográfico con seguimiento del tren, planificador de ida y
 vuelta, catálogo de estaciones, tarjeta, horarios, avisos y asistente.
 
 | Ruta | Qué es |
 |---|---|
-| `/` | Portada: qué hace el proyecto, los módulos, el trazado animado y el botón de entrada |
-| `/app/` | La aplicación |
+| `/` | **La aplicación**: es lo primero que se ve al abrir el sitio |
+| `/bienvenida/` | Presentación del proyecto: qué incluye, el trazado animado y el enlace de entrada |
 | `/rediseno/` | Un rediseño explorado y descartado: panel de operación, un módulo a la vez |
 | `/clasico/` | La primera versión del proyecto, en HTML y JS sin build |
+
+Quien abre la dirección entra directamente a la herramienta. La presentación
+está a un clic, en «Sobre el proyecto», al pie de la barra lateral.
 
 La aplicación vive en [`web/`](web/): Next.js + TypeScript + Tailwind CSS +
 Framer Motion + Leaflet, exportada como sitio estático.
@@ -25,7 +28,7 @@ Framer Motion + Leaflet, exportada como sitio estático.
 
 ---
 
-## Cómo está montada la aplicación (`/app/`)
+## Cómo está montada la aplicación
 
 El mapa ocupa el centro y **nunca se abandona**. Lo que cambia es el panel de la
 izquierda, según la sección elegida en la barra lateral.
@@ -94,6 +97,7 @@ indica que debe construir `web/` y publicar `web/out`; no hace falta tocar el
 
 ```
 web/                    Portada y aplicación en Next.js (ver web/README.md)
+  public/app/           Redirección para los enlaces antiguos a /app/
   public/rediseno/      El rediseño descartado, ya construido (archivo)
   public/clasico/       La primera versión, en HTML y JS sin build (archivo)
 vercel.json             Le dice a Vercel que construya web/
@@ -104,7 +108,7 @@ fotos linea 1/          Fotografías originales de las estaciones
 ## Las versiones archivadas
 
 Nada se descarta: las dos versiones que no están en uso siguen publicadas y
-enlazadas desde el pie de la portada.
+enlazadas desde el pie de la página de presentación.
 
 ### `/rediseno/` — el rediseño descartado
 

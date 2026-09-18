@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ArrowLeft, Bell, CircleHelp, Clock, CreditCard, Home, Map, Route, Settings, Sparkles, TrainFront,
+  Bell, CircleHelp, Clock, CreditCard, Home, Info, Map, Route, Settings, Sparkles, TrainFront,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -30,7 +30,7 @@ export function Sidebar({
 }) {
   return (
     <aside className="hidden w-[228px] shrink-0 flex-col bg-[#0C1512] text-white lg:flex">
-      <Link href="/" className="flex items-center gap-2.5 px-5 py-5 transition-opacity hover:opacity-80">
+      <div className="flex items-center gap-2.5 px-5 py-5">
         <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-verde text-white shadow-[0_6px_18px_rgba(0,155,58,.4)]">
           <TrainFront size={21} strokeWidth={2.2} />
         </span>
@@ -38,7 +38,7 @@ export function Sidebar({
           <span className="block text-[15px] font-extrabold tracking-tight">LÍNEA 1</span>
           <span className="block text-[11px] font-medium text-white/55">Metro de Lima</span>
         </span>
-      </Link>
+      </div>
 
       <nav className="flex flex-col gap-0.5 px-3 py-2" aria-label="Principal">
         {SECTIONS.map(({ id, label, icon: Icon }) => {
@@ -110,11 +110,11 @@ export function Sidebar({
         ))}
 
         <Link
-          href="/"
+          href="/bienvenida/"
           className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-semibold text-white/45 transition-colors hover:text-white/80"
         >
-          <ArrowLeft size={17} strokeWidth={2.1} />
-          Volver a la portada
+          <Info size={17} strokeWidth={2.1} />
+          Sobre el proyecto
         </Link>
       </div>
     </aside>

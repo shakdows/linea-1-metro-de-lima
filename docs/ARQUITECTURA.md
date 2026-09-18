@@ -18,23 +18,24 @@ web/
 
 | Ruta | Qué es |
 |---|---|
-| `/` | Portada. La única página con desplazamiento y secciones: presenta el proyecto, muestra qué incluye y el trazado, y lleva a la aplicación |
-| `/app/` | La aplicación. No se comporta como una página |
+| `/` | La aplicación. Es lo primero que se ve y no se comporta como una página |
+| `/bienvenida/` | Presentación del proyecto: la única página con desplazamiento y secciones |
+| `/app/` | Redirección a `/`, para que no se rompan los enlaces de cuando la aplicación vivía ahí |
 | `/rediseno/` | Un rediseño explorado y descartado, ya construido y archivado |
 | `/clasico/` | La primera versión, archivada: se sirve tal cual desde `public/`, sin pasar por Next |
 
-La separación es deliberada: entrar directamente al espacio de trabajo dejaba
-al visitante sin contexto y hacía que la herramienta pareciera una web a medio
-hacer. La portada explica qué es y quién lo hizo; la aplicación no tiene que
-explicar nada.
+La aplicación ocupa la raíz porque es el producto: quien abre la dirección
+quiere planificar un viaje, no leer sobre el proyecto. La presentación sigue
+existiendo para quien llega sin contexto, a un clic desde «Sobre el proyecto»,
+al pie de la barra lateral.
 
 ## El mapa en el centro
 
-Dentro de `/app/` no hay páginas. El mapa ocupa el centro y **nunca se
+En la aplicación no hay páginas. El mapa ocupa el centro y **nunca se
 abandona**; lo que cambia es el panel de la izquierda.
 
 ```
-app/app/page.tsx
+app/page.tsx
 ├── Sidebar      (228 px, fija, oscura)   ── elige la sección
 ├── Header       (buscador, estado del servicio, avisos)
 ├── panel izquierdo ── Planner │ TripPanel │ StationPanel │ StationList
@@ -45,7 +46,7 @@ app/app/page.tsx
 StationDrawer    ── ficha de estación a pantalla lateral
 ```
 
-`app/app/page.tsx` es el único dueño del estado: sección activa, reloj, estación
+`app/page.tsx` es el único dueño del estado: sección activa, reloj, estación
 inspeccionada, señales de dibujo del mapa y —a través de `useTrip`— todo el
 viaje. Los componentes reciben lo que necesitan por props y no hablan entre sí.
 

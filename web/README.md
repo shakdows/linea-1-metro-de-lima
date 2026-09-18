@@ -1,17 +1,18 @@
-# Línea 1 — portada y aplicación
+# Línea 1 — aplicación y presentación
 
-Dos rutas propias, más dos versiones archivadas, todas exportadas como HTML
-estático:
+Dos rutas propias, más dos versiones archivadas y una redirección, todas
+exportadas como HTML estático:
 
 | Ruta | Archivo | Qué es |
 |---|---|---|
-| `/` | `app/page.tsx` | Portada: presenta el proyecto y lleva a la aplicación |
-| `/app/` | `app/app/page.tsx` | La aplicación: el mapa en el centro y un panel que cambia de sección |
+| `/` | `app/page.tsx` | La aplicación: el mapa en el centro y un panel que cambia de sección |
+| `/bienvenida/` | `app/bienvenida/page.tsx` | Presentación del proyecto, enlazada desde la barra lateral |
+| `/app/` | `public/app/index.html` | Redirección a `/`, para los enlaces antiguos |
 | `/rediseno/` | `public/rediseno/` | Un rediseño explorado y descartado, ya construido |
 | `/clasico/` | `public/clasico/` | La primera versión del proyecto, en HTML y JS sin build |
 
-La portada es la única página con desplazamiento y secciones. La aplicación no
-se comporta como una página: el mapa nunca se abandona.
+La presentación es la única página con desplazamiento y secciones. La
+aplicación no se comporta como una página: el mapa nunca se abandona.
 
 ## Ejecutar
 
@@ -33,10 +34,10 @@ npm run build
 app/
   layout.tsx            Fuente, metadatos y tema
   globals.css           Tokens de diseño (@theme) y estilos de Leaflet
-  page.tsx              Portada
-  app/
-    layout.tsx          Metadatos de la aplicación
-    page.tsx            Estado compartido y composición de la aplicación
+  page.tsx              Estado compartido y composición de la aplicación
+  bienvenida/
+    layout.tsx          Metadatos de la presentación
+    page.tsx            Presentación del proyecto
 components/
   Sidebar.tsx           Navegación lateral (escritorio)
   MobileNav.tsx         Navegación inferior (móvil)
@@ -54,10 +55,11 @@ components/
   MobileSheet.tsx       Hoja inferior arrastrable en móvil
   Card.tsx              Superficie base y cabecera de tarjeta
   landing/
-    LineaDiagrama.tsx   El trazado real proyectado a SVG, para la portada
+    LineaDiagrama.tsx   El trazado real proyectado a SVG, para la presentación
 public/
   estaciones/           Fotografías de 21 de las 26 estaciones (WebP)
   img/                  Fotografías de tren y viaducto de la barra lateral
+  app/                  Redirección para los enlaces antiguos a /app/
   rediseno/             El rediseño descartado, ya construido (archivo)
   clasico/              La primera versión del proyecto (archivo)
 data/

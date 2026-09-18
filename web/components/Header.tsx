@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Bell, Menu, Search, TrainFront } from "lucide-react";
 import { useState } from "react";
 import { SERVICE_STATUS, STATIONS } from "@/data/stations";
@@ -53,12 +52,12 @@ export function Header({
           <Menu size={19} />
         </button>
 
-        <Link href="/" aria-label="Volver a la portada" className="flex items-center gap-2 lg:hidden">
+        <span className="flex items-center gap-2 lg:hidden">
           <span className="grid size-9 place-items-center rounded-[10px] bg-verde text-white">
             <TrainFront size={18} strokeWidth={2.2} />
           </span>
           <span className="text-[14px] font-extrabold tracking-tight">LÍNEA 1</span>
-        </Link>
+        </span>
 
         <div className="relative hidden max-w-md flex-1 sm:block">
           <Search
