@@ -1,8 +1,8 @@
 # Activos visuales: qué falta, qué necesito de ti y cómo generarlo
 
-El sitio **funciona completo sin una sola fotografía**: el hero, los iconos y el
-mapa son vectores propios. Pero hay huecos donde una imagen o un vídeo lo
-elevan. Aquí está el inventario exacto, con el prompt listo para pegar.
+La aplicación **funciona completa sin una sola fotografía**: el mapa y los
+iconos son vectores. Pero hay huecos donde una imagen o un vídeo la elevan.
+Aquí está el inventario exacto, con el prompt listo para pegar.
 
 ---
 
@@ -12,16 +12,16 @@ elevan. Aquí está el inventario exacto, con el prompt listo para pegar.
 
 | # | Qué | Por qué |
 |---|---|---|
-| 1 | **¿Es un concepto académico o va en serio?** Si va en serio, necesitas permiso del operador para usar marca y datos. | Hoy el sitio lleva la franja «Interfaz conceptual para fines académicos» en todas las páginas |
-| 2 | **Logotipo en SVG** (o PNG transparente ≥1024 px) | Hoy hay una marca geométrica propia en `assets/img/` |
+| 1 | **¿Es un concepto académico o va en serio?** Si va en serio, necesitas permiso del operador para usar marca y datos. | Hoy la aplicación lleva la nota «Interfaz conceptual para fines académicos» en todos los módulos |
+| 2 | **Logotipo en SVG** (o PNG transparente ≥1024 px) | Hoy la marca es un icono de tren sobre un cuadrado verde, dibujado en el propio código |
 | 3 | **Verde exacto de marca en HEX** | Uso `#009B3A`, tomado de tu especificación |
-| 4 | **Tipografía autorizada** | Uso Plus Jakarta Sans desde Google Fonts |
+| 4 | **Tipografía autorizada** | Uso Inter desde Google Fonts |
 
 ### 🟠 Muy recomendable
 
 | # | Qué | Para qué |
 |---|---|---|
-| 5 | **Horarios oficiales** por estación y sentido | Reemplazar `frecuencias` en `data.js` |
+| 5 | **Horarios oficiales** por estación y sentido | Reemplazar `HEADWAY` en `data/stations.ts` |
 | 6 | **Tarifa vigente** y tipos de tarjeta | Hoy asumo S/ 1.50 plana |
 | 7 | **Coordenadas reales** de las 26 estaciones | Las mías son aproximadas |
 | 8 | **Listado de salidas** por estación | Es la función que más se usaría a diario; hoy solo hay 1–2 por estación |
@@ -37,33 +37,30 @@ inglés y quechua · dominio propio para publicarlo.
 
 ## 2. Inventario de imágenes
 
+La aplicación **funciona completa sin una sola fotografía**: el mapa, los
+iconos y los estados vacíos son vectores. Las fotos aparecen solo donde aportan
+—inspector de estación y catálogo—.
+
 | Archivo | Tamaño | Formato | Dónde aparece | Estado |
 |---|---|---|---|---|
-| `assets/img/hero-tren.svg` | 1200×800 | SVG | Fondo derecho del hero | ✅ Hecho (vector propio) |
-| `assets/img/favicon.svg` | 64×64 | SVG | Pestaña del navegador | 🟡 Provisional |
-| `assets/img/icon-192.png` | 192×192 | PNG | Icono PWA en Android | 🟡 Provisional |
-| `assets/img/icon-512.png` | 512×512 | PNG | Icono PWA e instalación | 🟡 Provisional |
-| `assets/img/og-cover.png` | 1200×630 | PNG | Vista previa al compartir | 🟡 Provisional |
-| `assets/img/screenshot-escritorio.png` | 1440 ancho | PNG | README | ✅ Hecha |
-| `assets/img/screenshot-movil.png` | 390×844 | PNG | README | ✅ Hecha |
-| `assets/img/estacion-*.webp` | 800×600 | WebP | *(opcional)* foto por estación | ⚪ No existe |
+| `web/public/estaciones/*.webp` | 880×560 | WebP | Inspector de estación y catálogo | ✅ 21 de 26 estaciones |
+| `web/app/favicon.ico` | 32×32 | ICO | Pestaña del navegador | 🟡 Provisional |
+| `og-cover.png` | 1200×630 | PNG | Vista previa al compartir | ⚪ No existe |
 
-Los tres PNG provisionales los genera `python3 tools/generar_iconos.py` sin
-dependencias. Sustituye el archivo manteniendo nombre y tamaño: no hay que
-tocar código.
+Sin foto: Parque Industrial, Pumacahua, San Juan, Atocongo y Ayacucho. La
+interfaz usa un marcador con el color de marca cuando falta, así que añadir o
+quitar fotos no rompe nada: basta el campo `image` en `data/stations.ts`.
 
-### Cambiar el hero por una fotografía
+Los originales están en `fotos linea 1/estaciones/`; las versiones servidas son
+WebP de 880×560 px, que reducen el peso de 5,5 MB a unos 900 KB.
 
-El hero está preparado para aceptar una foto sin tocar el CSS:
+### Añadir la foto de una estación
 
-```html
-<!-- index.html, dentro de .hero__arte -->
-<img src="assets/img/hero-tren.webp" alt="">
-```
+1. Guarda el WebP en `web/public/estaciones/<id>.webp`, con el mismo `id` que
+   usa `data/stations.ts` (por ejemplo `atocongo.webp`).
+2. Añade `image: "/estaciones/atocongo.webp"` a esa estación.
 
-El degradado blanco que funde la imagen con el fondo ya está aplicado en
-`.hero__arte::after`. La foto debe tener el tren a la derecha y espacio libre a
-la izquierda.
+No hay que tocar ningún componente.
 
 ---
 
@@ -89,7 +86,7 @@ carteles legibles, sin logotipos de marcas reales.
 Resolución alta, aspecto limpio y editorial, no HDR.
 ```
 
-Después conviértela: `cwebp -q 82 hero.png -o assets/img/hero-tren.webp`.
+Después conviértela: `cwebp -q 82 foto.png -o web/public/estaciones/<id>.webp`.
 
 ### 3.2 · Icono de la app (`icon-512.png`)
 
@@ -200,16 +197,16 @@ Naranja              #F07C1F   afluencia alta
 Rojo                 #E5484D   interrupciones, afluencia muy alta
 ```
 
-- **Tipografía**: Plus Jakarta Sans (400, 600, 700, 800). Alternativas: Inter, Manrope.
-- **Acento manuscrito**: Caveat (solo para la firma «Lima avanza contigo»).
-- **Radios**: 10 / 14 / 20 / 26 px y 999 px para píldoras.
+- **Tipografía**: Inter (400, 500, 600). Alternativas: Manrope, Plus Jakarta Sans.
+- **Radios**: 8 / 12 / 14 px y 999 px para píldoras.
 - **Sombras**: muy suaves, nunca negras puras.
 - **Movimiento**: 180–340 ms, `cubic-bezier(.2,.8,.3,1)`. Nada más largo.
 - **Nunca**: neón, glassmorphism, degradados arcoíris, stock genérico con gente
   mirando a cámara, texto dentro de las imágenes, iconografía de estilos mezclados.
 
-Todo esto vive en `:root` dentro de `assets/css/style.css`. Cambiando esas ~20
-variables, el sitio entero cambia de identidad sin tocar el HTML.
+Todo esto vive en el bloque `@theme` de `web/app/globals.css`. Tailwind genera
+las utilidades a partir de esos *tokens*: cambiarlos cambia la aplicación
+entera sin tocar un solo componente.
 
 ### Prompt de sistema para ChatGPT
 
@@ -220,12 +217,12 @@ Eres director de arte de una app de transporte público llamada Línea 1
 (Metro de Lima). Todo lo que generes debe cumplir:
 
 Paleta estricta: #009B3A (verde principal), #006B2C (verde oscuro),
-#E8F7ED (verde claro), #F7F9F8 (fondo), #FFFFFF, #101817 (texto).
-Acentos solo #F5B82E, #F07C1F y #E5484D.
-Tipografía: Plus Jakarta Sans.
+#E9F7EE (verde suave), #081812 (barra lateral), #F5F7F6 (fondo), #FFFFFF,
+#111827 (tinta). Acentos solo #1687F8, #B45309 y #D92D20.
+Tipografía: Inter.
 Estilo: flat, geométrico, mucho espacio en blanco, esquinas redondeadas de
-14 a 26 px, sombras muy suaves. Referencias: Citymapper, Apple Maps, apps de
-metro europeas.
+8 a 14 px, sombras muy suaves. Referencias: Citymapper, Apple Maps, paneles
+de operación tipo Linear o Stripe.
 Prohibido: neón, glassmorphism, degradados arcoíris, stock fotográfico
 genérico, texto dentro de las imágenes, logotipos de marcas reales.
 
@@ -240,11 +237,11 @@ formato de archivo recomendado.
 1. Dos artboards: **1440×1024** (escritorio) y **390×844** (móvil).
 2. Crea los estilos de color con los HEX de arriba y los de texto con los
    tamaños que ya usa el CSS (`h1` 56 px, `h2` 26 px, cuerpo 15 px, meta 13 px).
-3. Componentes a montar, en este orden: `Navbar`, `Hero`, `TripPlanner`,
-   `TripResult`, `MetroLineMap`, `StationTooltip`, `NextTrains`,
-   `CrowdingChart`, `MetroCard`, `ServiceAlerts`, `AIChat`, `NearbyStations`,
-   `Footer`. Son exactamente los bloques que ya existen en el código.
-4. Exporta los iconos desde Figma directamente a `assets/img/`.
+3. Componentes a montar, en este orden: `Sidebar`, `Topbar`, `MobileTabs`,
+   `TripPlanner`, `RouteSummary`, `MetroMap`, `TripHUD`, `StationDrawer`,
+   `StationList`, `MetroCard`, `ScheduleTable`, `AlertsCenter`,
+   `AssistantWorkspace`. Son exactamente los bloques que existen en el código.
+4. Exporta los iconos desde Figma a `web/public/`.
 
-No hace falta rediseñarlo todo para cambiar el aspecto: con las variables de
-`:root` el sitio entero cambia de identidad.
+No hace falta rediseñarlo todo para cambiar el aspecto: con los *tokens* de
+`@theme` la aplicación entera cambia de identidad.

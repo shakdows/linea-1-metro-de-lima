@@ -1,31 +1,39 @@
 @import "tailwindcss";
 
 /* =========================================================================
-   LÍNEA 1 — Metro de Lima · tokens de diseño
-   Cambiando estas variables cambia toda la aplicación.
+   LÍNEA 1 — Sistema de diseño
+   Plataforma de operaciones de movilidad. Superficies claras, bordes finos,
+   sombras mínimas, color reservado para el estado.
    ========================================================================= */
 @theme {
+  --color-sidebar: #081812;
+  --color-sidebar-alt: #0b2218;
   --color-verde: #009b3a;
   --color-verde-oscuro: #006b2c;
-  --color-verde-claro: #e8f7ed;
+  --color-verde-suave: #e9f7ee;
   --color-azul: #1687f8;
-  --color-azul-claro: #e6f1fe;
+  --color-azul-suave: #e8f2fe;
+  --color-ambar: #b45309;
+  --color-ambar-suave: #fef6e7;
+  --color-rojo: #d92d20;
+  --color-rojo-suave: #fef3f2;
+  --color-fondo: #f5f7f6;
+  --color-superficie: #ffffff;
+  --color-borde: #dde4e0;
+  --color-borde-suave: #edf1ef;
+  --color-tinta: #111827;
+  --color-tinta-suave: #667085;
   --color-inactivo: #cbd5e1;
-  --color-amarillo: #f5b82e;
-  --color-naranja: #f07c1f;
-  --color-rojo: #e5484d;
-  --color-fondo: #f6f8f7;
-  --color-tinta: #121816;
-  --color-tinta-suave: #6b7671;
-  --color-borde: #e6ebe8;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  --radius-card: 18px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
 
-  --shadow-suave: 0 1px 2px rgba(18, 24, 22, .04), 0 2px 10px rgba(18, 24, 22, .04);
-  --shadow-media: 0 2px 8px rgba(18, 24, 22, .05), 0 12px 30px rgba(18, 24, 22, .06);
-  --shadow-alta: 0 10px 34px rgba(18, 24, 22, .1), 0 28px 60px rgba(18, 24, 22, .08);
+  --shadow-borde: 0 0 0 1px rgba(17, 24, 39, .04);
+  --shadow-sutil: 0 1px 2px rgba(17, 24, 39, .04);
+  --shadow-panel: 0 1px 3px rgba(17, 24, 39, .06), 0 8px 24px rgba(17, 24, 39, .06);
+  --shadow-flotante: 0 4px 12px rgba(17, 24, 39, .08), 0 16px 40px rgba(17, 24, 39, .1);
 }
 
 html { scroll-behavior: smooth; }
@@ -35,35 +43,34 @@ body {
   color: var(--color-tinta);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
-/* Barras de desplazamiento discretas */
-.scroll-fino::-webkit-scrollbar { height: 6px; width: 6px; }
+/* Desplazamiento discreto, como en una aplicación de escritorio */
+.scroll-fino { scrollbar-width: thin; scrollbar-color: var(--color-borde) transparent; }
+.scroll-fino::-webkit-scrollbar { height: 8px; width: 8px; }
 .scroll-fino::-webkit-scrollbar-track { background: transparent; }
-.scroll-fino::-webkit-scrollbar-thumb { background: var(--color-borde); border-radius: 99px; }
-.scroll-fino:hover::-webkit-scrollbar-thumb { background: var(--color-inactivo); }
+.scroll-fino::-webkit-scrollbar-thumb { background: var(--color-borde); border-radius: 99px; border: 2px solid transparent; background-clip: content-box; }
+.scroll-fino:hover::-webkit-scrollbar-thumb { background: var(--color-inactivo); background-clip: content-box; }
 
-/* Halo de la estación en la que está el tren */
+.tabular { font-variant-numeric: tabular-nums; }
+
 @keyframes halo {
-  0%   { box-shadow: 0 0 0 0 rgba(0, 155, 58, .5); }
-  70%  { box-shadow: 0 0 0 14px rgba(0, 155, 58, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(0, 155, 58, .45); }
+  70%  { box-shadow: 0 0 0 12px rgba(0, 155, 58, 0); }
   100% { box-shadow: 0 0 0 0 rgba(0, 155, 58, 0); }
 }
-.halo { animation: halo 1.6s ease-out infinite; }
+.halo { animation: halo 1.8s ease-out infinite; }
 @keyframes halo-azul {
-  0%   { box-shadow: 0 0 0 0 rgba(22, 135, 248, .5); }
-  70%  { box-shadow: 0 0 0 14px rgba(22, 135, 248, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(22, 135, 248, .45); }
+  70%  { box-shadow: 0 0 0 12px rgba(22, 135, 248, 0); }
   100% { box-shadow: 0 0 0 0 rgba(22, 135, 248, 0); }
 }
-.halo-azul { animation: halo-azul 1.6s ease-out infinite; }
+.halo-azul { animation: halo-azul 1.8s ease-out infinite; }
 
 @keyframes pulso {
-  0%   { transform: scale(.6); opacity: .7; }
-  100% { transform: scale(1.6); opacity: 0; }
-}
-.pulso::after {
-  content: ''; position: absolute; inset: -3px; border-radius: 50%;
-  border: 2px solid currentColor; animation: pulso 2.4s ease-out infinite;
+  0%   { transform: scale(.6); opacity: .6; }
+  100% { transform: scale(1.5); opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -80,21 +87,20 @@ body {
    ========================================================================= */
 
 .leaflet-container {
-  font-family: var(--font-sans); background: #eaeef0;
+  font-family: var(--font-sans); background: #eceff0;
   /* Los panes de Leaflet llevan z-index 400-700. Sin un contexto de
      apilamiento propio se colocan por encima de la hoja inferior y de los
      paneles flotantes de la aplicación. */
   position: relative; z-index: 0; isolation: isolate;
 }
 .leaflet-control-zoom a {
-  border-radius: 10px !important; color: var(--color-tinta) !important;
-  border-color: rgba(255, 255, 255, .6) !important;
-  background: rgba(255, 255, 255, .9) !important;
-  backdrop-filter: blur(10px); box-shadow: var(--shadow-suave);
+  border-radius: 8px !important; color: var(--color-tinta) !important;
+  border-color: var(--color-borde) !important; background: #fff !important;
+  box-shadow: var(--shadow-sutil);
 }
 .leaflet-control-attribution {
-  font-size: 10px; background: rgba(255, 255, 255, .7) !important;
-  backdrop-filter: blur(6px); border-radius: 6px 0 0 0;
+  font-size: 9.5px; background: rgba(255, 255, 255, .8) !important;
+  color: var(--color-tinta-suave); border-radius: 6px 0 0 0;
 }
 .leaflet-marker-icon:focus { outline: none; }
 
@@ -134,24 +140,23 @@ body {
 }
 .station-label.is-route { color: var(--color-verde-oscuro); }
 .station-label.is-key {
-  font-size: 11.5px; font-weight: 800; color: var(--color-tinta);
-  background: rgba(255, 255, 255, .9); border-radius: 7px; padding: 2px 7px;
-  box-shadow: 0 1px 4px rgba(18, 24, 22, .12); text-shadow: none;
+  font-size: 11px; font-weight: 700; color: var(--color-tinta);
+  background: #fff; border: 1px solid var(--color-borde); border-radius: 6px;
+  padding: 2px 7px; box-shadow: var(--shadow-sutil); text-shadow: none;
 }
 .station-label.is-key.is-route { color: var(--color-verde-oscuro); }
 
 /* ---- Tarjeta con foto, al pasar el puntero ---- */
 .station-card {
   position: absolute; bottom: 26px; left: 50%;
-  width: 190px; transform: translate(-50%, 6px) scale(.96);
+  width: 176px; transform: translate(-50%, 6px) scale(.97);
   opacity: 0; pointer-events: none; transform-origin: bottom center;
-  background: rgba(255, 255, 255, .92); backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, .8); border-radius: 14px; overflow: hidden;
-  box-shadow: var(--shadow-alta); z-index: 700;
+  background: #fff; border: 1px solid var(--color-borde); border-radius: 12px;
+  overflow: hidden; box-shadow: var(--shadow-flotante); z-index: 700;
   transition: opacity 200ms ease-out, transform 200ms cubic-bezier(.2, .8, .3, 1);
 }
 .leaflet-marker-icon:hover .station-card { opacity: 1; transform: translate(-50%, 0) scale(1); }
-.station-card img { display: block; width: 100%; height: 92px; object-fit: cover; }
+.station-card img { display: block; width: 100%; height: 84px; object-fit: cover; }
 .station-card__body { display: block; padding: 8px 11px 10px; }
 .station-card b { display: block; font-size: 12.5px; font-weight: 800; letter-spacing: -.01em; color: var(--color-tinta); }
 .station-card i { display: block; font-size: 10.5px; font-style: normal; color: var(--color-tinta-suave); margin-top: 1px; }
@@ -159,14 +164,14 @@ body {
 /* ---- Tren ---- */
 .train-pin {
   display: grid; place-items: center; position: relative;
-  width: 40px; height: 40px; border-radius: 50%;
+  width: 36px; height: 36px; border-radius: 50%;
   color: #fff; background: var(--color-verde);
-  box-shadow: 0 6px 18px rgba(0, 107, 44, .45); border: 3px solid #fff; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 107, 44, .4); border: 3px solid #fff; cursor: pointer;
   transition: background 280ms ease-out;
 }
 .train-pin.vuelta { background: var(--color-azul); box-shadow: 0 6px 18px rgba(11, 95, 192, .45); }
 .train-pin svg {
-  width: 20px; height: 20px;
+  width: 18px; height: 18px;
   transform: rotate(calc(var(--angle, 0deg) - 90deg));
   transition: transform 340ms cubic-bezier(.2, .8, .3, 1);
 }
@@ -184,30 +189,24 @@ body {
 
 /* ---- Etiqueta de avenida ---- */
 .avenue-pill {
-  position: absolute; transform: translate(-50%, -32px); white-space: nowrap;
-  font-size: 10px; font-weight: 700; color: #1256a8;
-  background: rgba(232, 242, 254, .92); backdrop-filter: blur(8px);
-  border: 1px solid rgba(191, 219, 254, .9); border-radius: 999px; padding: 3px 9px;
-  box-shadow: 0 1px 4px rgba(18, 24, 22, .08);
+  position: absolute; transform: translate(-50%, -30px); white-space: nowrap;
+  font-size: 9.5px; font-weight: 600; letter-spacing: .01em; color: var(--color-tinta-suave);
+  background: rgba(255, 255, 255, .94); border: 1px solid var(--color-borde);
+  border-radius: 6px; padding: 2px 7px; box-shadow: var(--shadow-sutil);
   /* Son rótulos informativos: si capturan el puntero tapan las estaciones
      que quedan debajo y estas dejan de poder seleccionarse. */
   pointer-events: none;
 }
 
 /* ---- Cristal sobre el mapa ---- */
-.glass {
-  background: rgba(255, 255, 255, .78);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, .7);
-  box-shadow: 0 8px 32px rgba(18, 24, 22, .12);
+/* Superficie flotante sobre el mapa: sólida, no de cristal */
+.flotante {
+  background: #fff; border: 1px solid var(--color-borde);
+  box-shadow: var(--shadow-flotante);
 }
-.glass-oscuro {
-  background: rgba(15, 22, 20, .82);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, .1);
-  color: #fff;
+.flotante-oscuro {
+  background: var(--color-sidebar); border: 1px solid rgba(255, 255, 255, .08);
+  color: #fff; box-shadow: var(--shadow-flotante);
 }
 
 /* Números que no bailan al cambiar */

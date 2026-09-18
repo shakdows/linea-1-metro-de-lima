@@ -21,7 +21,7 @@ aquí está separado con claridad el origen de cada dato.
 | **Próximos trenes** | Función determinística sobre el reloj y el *headway* de la franja | API de llegadas en tiempo real |
 | **Frecuencias** | Tabla por hora (3 min en punta, 8 min en valle) | Tabla horaria oficial por sentido y estación |
 | **Afluencia** | Perfil por hora inventado a partir del patrón típico | Datos de validaciones o conteo de pasajeros |
-| **Avisos de servicio** | Tres ejemplos fijos en `data.js` | Feed / CMS del operador |
+| **Avisos de servicio** | Siete registros de ejemplo en `data/stations.ts` | Feed / CMS del operador |
 | **Estado del servicio** | Constante `normal` | Endpoint de estado |
 | **Saldo de la tarjeta** | Número fijo con animación | API de la tarjeta, con autenticación |
 | **Salidas de estación** | Incompletas, una o dos por estación | Listado oficial de vestíbulos y salidas |
@@ -29,49 +29,55 @@ aquí está separado con claridad el origen de cada dato.
 | **Distancia caminando** | Línea recta × 1,3 a 4,5 km/h | Ruteo peatonal real (OSRM, Mapbox) |
 | **Horario 05:30–22:30** | Aproximado y uniforme | Horario por estación y sentido |
 
-Todo lo simulado está marcado en pantalla de dos formas: la banda superior de
-aviso, y una **etiqueta de procedencia** junto a cada dato:
-
-| Etiqueta | Significado |
-|---|---|
-| 🟢 Tiempo real | Recibido de la operación en vivo *(ningún dato lo es todavía)* |
-| 🟣 Estimación | Calculado sobre el patrón habitual de la línea |
-| ⚪ Demostración | Valor de ejemplo; requiere conectar la fuente oficial |
-
-Las define `LINEA1.procedencia` en `data.js` y las pinta `UI.etiquetaDato()`.
+Todo lo simulado está identificado en pantalla: cada módulo lleva la nota
+«Interfaz conceptual para fines académicos» y las cifras estimadas se muestran
+como tales (afluencia *estimada*, frecuencia *estimada*, próximos trenes
+calculados sobre el *headway* de la franja).
 
 ## Dónde se cambia
 
-Todo vive en un único archivo: [`assets/js/data.js`](../assets/js/data.js).
+Los datos viven en `web/data/`:
 
-```js
-const LINEA1 = {
-  estaciones: [ /* 26 objetos */ ],
-  frecuencias: { 7: 3, 8: 3, ... },   // minutos entre trenes por hora
-  afluencia:   { 7: 88, 8: 95, ... }, // 0 a 100
-  avisos:      [ ... ],
-  estado:      { nivel: 'normal', mensaje: '...' }
+| Archivo | Contenido |
+|---|---|
+| `data/stations.ts` | `STATIONS` (26 estaciones), `LINE`, `DIRECTIONS`, `HEADWAY`, `CROWDING`, `ALERTS`, `SERVICE_STATUS` |
+| `data/route.ts` | Trazado (`LINE_PATH`), avenidas y utilidades geográficas |
+| `data/card.ts` | Tarjeta de demostración y sus movimientos |
+
+La lógica derivada (rutas, próximos trenes, afluencia, formato de hora) está en
+`web/lib/trip.ts`, y el asistente por reglas en `web/lib/assistant.ts`.
+
+```ts
+// data/stations.ts
+export const HEADWAY: Record<number, number> = { 7: 3, 8: 3, /* … */ };
+export const CROWDING: Record<number, number> = { 7: 88, 8: 95, /* … */ };
+export const SERVICE_STATUS = { level: "normal", title: "Servicio normal", detail: "…" };
+```
+
+Para probar el modo con incidencias, cambia `SERVICE_STATUS`:
+
+```ts
+export const SERVICE_STATUS = {
+  level: "demoras",
+  title: "Demoras en el servicio",
+  detail: "Frecuencias ampliadas por regulación",
+  segment: "Gamarra ↔ La Cultura",
+  extraMinutes: 10,
 };
 ```
 
-Para probar el modo *demoras*, cambia:
-
-```js
-estado: {
-  nivel: 'demoras',
-  mensaje: 'Demoras en el servicio',
-  tramo: 'Gamarra ↔ La Cultura',
-  demoraMin: 10
-}
-```
+Toda la interfaz (barra superior, Inicio, Avisos, inspector de estación) lee de
+ahí, así que basta ese cambio para ver el estado degradado en todos los módulos.
 
 ## Cómo conectar datos reales
 
-1. Sustituye el objeto `LINEA1` por una llamada `fetch()` a tu API o a Supabase.
-2. Mantén la forma de los objetos: `L1.*` (las utilidades de dominio) seguirá
-   funcionando sin cambios.
-3. Reemplaza `L1.proximosTrenes()` por la respuesta del endpoint de llegadas.
-4. Si publicas datos que no son oficiales, **deja la banda de aviso**.
+1. Sustituye las constantes de `data/stations.ts` por una llamada a tu API.
+   Mantén la forma de los objetos y el resto del código seguirá funcionando.
+2. Reemplaza `nextTrains()` de `lib/trip.ts` por la respuesta del endpoint de
+   llegadas en tiempo real.
+3. Cambia `answer()` de `lib/assistant.ts` por una llamada a tu modelo si
+   quieres un asistente real; hoy responde con reglas sobre los datos locales.
+4. Si publicas datos que no son oficiales, **deja la nota de aviso**.
 
 ## Aviso legal
 

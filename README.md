@@ -1,12 +1,12 @@
 # Línea 1 — Metro de Lima
 
 Aplicación web de movilidad para la Línea 1 del Metro de Lima. No es una web
-institucional: es la herramienta con la que un pasajero resuelve su viaje —
-mapa geográfico interactivo con seguimiento del tren, planificador de ida y
-vuelta, próximos trenes, afluencia por franja horaria, avisos y un asistente
-que entiende lenguaje natural.
+institucional ni una *landing*: es un **espacio de trabajo** con barra lateral
+fija, barra superior y un área central que cambia de módulo sin recargar —
+mapa geográfico con seguimiento del tren, planificador de ida y vuelta,
+catálogo de estaciones, tarjeta, horarios, avisos y asistente.
 
-La aplicación vive en [`web/`](web/): Next.js + TypeScript + Tailwind +
+La aplicación vive en [`web/`](web/): Next.js + TypeScript + Tailwind CSS +
 Framer Motion + Leaflet, exportada como sitio estático.
 
 > ⚠️ **Interfaz conceptual con fines académicos.** No representa el sitio oficial
@@ -14,44 +14,45 @@ Framer Motion + Leaflet, exportada como sitio estático.
 > niveles de afluencia son **estimaciones simuladas**.
 > Ver [`docs/DATOS.md`](docs/DATOS.md).
 
-![Vista de escritorio](assets/img/screenshot-escritorio.png)
-
-<p align="center">
-  <img src="assets/img/screenshot-movil.png" alt="Vista móvil" width="300">
-</p>
-
 ---
 
-## Qué incluye
+## Los módulos
 
-| Pantalla | Archivo | Contenido |
-|---|---|---|
-| Inicio | `index.html` | Hero, planificador, resultado del viaje, mapa, próximos trenes, afluencia, tarjeta, avisos, asistente, estaciones cercanas |
-| Mapa | `mapa.html` | Esquema de la línea, buscador, ubicación, mapa geográfico (Leaflet) y listado por distrito |
-| Estación | `estacion.html?id=gamarra` | Trenes por sentido, afluencia, salidas numeradas, referencias cercanas, contiguas y planificador |
+Un único armazón (`AppShell`) y ocho áreas de trabajo. La barra lateral y la
+superior no se desmontan nunca; solo cambia el centro.
 
-### Funcionalidades
+| Módulo | Qué resuelve |
+|---|---|
+| **Inicio** | Centro de operaciones personal: saludo, planificador, próximos trenes desde tu estación de referencia, afluencia, accesos guardados y la línea de extremo a extremo |
+| **Mapa** | El mapa ocupa toda el área útil. Controles flotantes y, durante el viaje, un HUD inferior con progreso y mandos |
+| **Planificar viaje** | Formulario arriba y los dos tramos —ida y vuelta— en paralelo, con la secuencia de paradas |
+| **Estaciones** | Catálogo denso con fotografía, distrito, avenida, distintivos y próximo tren; filtros por zona y búsqueda |
+| **Tarjeta** | Tarjeta de demostración y tabla de movimientos |
+| **Horarios** | Tabla profesional por estación, sentido y tipo de día |
+| **Avisos** | Centro de incidencias: lista cronológica a la izquierda, detalle a la derecha |
+| **Asistente** | Conversación a la izquierda; a la derecha, la ruta que menciona la pregunta, con un botón que la carga en el mapa real |
+
+### Cómo se comporta
 
 - 🗺️ **Mapa geográfico real** (Leaflet + OpenStreetMap) con las 26 estaciones,
   el trazado de la línea y etiquetas de las avenidas principales.
 - 🚆 **Tren animado sobre coordenadas reales**: interpola entre estaciones, se
-  orienta según el rumbo, se detiene 800 ms en cada parada y marca con ✓ las
-  estaciones ya recorridas. El recorrido se calcula, no está grabado.
-- 🎛️ **Control total del viaje**: iniciar, pausar, continuar, finalizar,
-  reiniciar e **iniciar la vuelta** (el tren cambia a azul y gira).
+  orienta según el rumbo, se detiene en cada parada y marca las ya recorridas.
+  El recorrido se calcula, no está grabado.
+- 🎛️ **Control del viaje**: iniciar, pausar, continuar, finalizar, reiniciar e
+  **iniciar la vuelta** (el tren cambia a azul y gira).
 - 🟢🔵 **Ida y vuelta** con ruta verde y azul, y el resto de la línea atenuado.
-- 📍 **Selección desde el mapa**: al tocar una estación se abre su ficha con
-  próximos trenes, afluencia, avenida y botones de origen y destino.
-- 🎯 **Zoom automático** al tramo elegido y botón para ver toda la línea.
-- 🧭 **Mi ubicación** con la estación más cercana y los minutos caminando.
-- 📊 Próximos trenes, afluencia por franja horaria, tarjeta, avisos y asistente.
-- 📱 **Mobile first**: navegación inferior y panel del viaje como hoja
-  deslizable.
+- 🔎 **Inspector de estación**: al tocar una estación —en el mapa, en el
+  catálogo, en el buscador o en el diagrama de Inicio— se abre un cajón lateral
+  derecho, no un modal que tape el contexto.
+- 🎯 Zoom automático al tramo elegido y botón para ver toda la línea.
+- 🧭 **Mi ubicación** con la estación más cercana.
+- 📱 **Móvil**: cuatro pestañas inferiores y una hoja «Más» con el resto de
+  módulos; ningún módulo queda inalcanzable.
 
+No hay botones decorativos: cada control está ligado a un estado real.
 
 ## Cómo ejecutarlo
-
-**La aplicación** (Next.js):
 
 ```bash
 git clone https://github.com/shakdows/linea-1-metro-de-lima.git
@@ -60,10 +61,13 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-## Despliegue
+Para generar el sitio estático que se publica (`web/out`):
 
-**GitHub Pages** — configurado en `.github/workflows/pages.yml`: construye
-`web/` y publica `web/out`. En *Settings → Pages* elige `GitHub Actions`.
+```bash
+npm run build
+```
+
+## Despliegue
 
 **Vercel** — importa el repositorio tal cual. El `vercel.json` de la raíz ya
 indica que debe construir `web/` y publicar `web/out`; no hace falta tocar el
@@ -74,45 +78,39 @@ indica que debe construir `web/` y publicar `web/out`; no hace falta tocar el
 > hace que también se redirijan los `.css` y `.js`, que pasan a dar 404 y la
 > página se queda sin estilos.
 
+**GitHub Pages** — configurado en `.github/workflows/pages.yml`: construye
+`web/` con `BASE_PATH=/<repo>` y publica `web/out`. En *Settings → Pages* elige
+`GitHub Actions`.
+
 ## Estructura
 
 ```
 web/                    Aplicación Next.js (ver web/README.md)
 vercel.json             Le dice a Vercel que construya web/
-mapa.html               Mapa esquemático + geográfico
-estacion.html           Ficha de estación (?id=…)
-manifest.webmanifest    Configuración PWA
-sw.js                   Service worker (cache-first)
-assets/
-  css/style.css         Sistema de diseño completo (todo en :root)
-  js/data.js            Las 26 estaciones y utilidades de dominio
-  js/ui.js              Componentes: estado, mapa, tooltip, trenes, afluencia…
-  js/planner.js         Cálculo del viaje y animación del recorrido
-  js/assistant.js       Asistente por reglas
-  js/app.js             Portada
-  js/estacion.js        Ficha de estación
-  js/mapa.js            Mapa, buscador y ubicación
-  img/hero-tren.svg     Ilustración del hero (sustituible por foto)
-docs/                   Datos, arquitectura y guía de diseño
+docs/                   Datos, arquitectura, guía de activos y arquetipo de usuario
+fotos linea 1/          Fotografías originales de las estaciones
 ```
 
 ## Personalizar el aspecto
 
-Toda la identidad vive en `:root` de `assets/css/style.css`:
+Toda la identidad vive en el bloque `@theme` de
+[`web/app/globals.css`](web/app/globals.css):
 
 ```css
---verde: #009b3a;      --verde-oscuro: #006b2c;   --verde-claro: #e8f7ed;
---fondo: #f7f9f8;      --texto: #101817;          --texto-suave: #68736f;
---amarillo: #f5b82e;   --naranja: #f07c1f;        --rojo: #e5484d;
+--color-sidebar: #081812;   --color-verde: #009b3a;    --color-azul: #1687f8;
+--color-fondo:   #f5f7f6;   --color-superficie: #fff;  --color-borde: #dde4e0;
+--color-tinta:   #111827;   --color-tinta-suave: #667085;
 ```
 
-Cambiando esas variables cambia el sitio entero, sin tocar el HTML.
+Tailwind genera las utilidades (`bg-verde`, `text-tinta-suave`, `border-borde`…)
+a partir de esos *tokens*: cambiarlos cambia la aplicación entera.
 
 ## Documentación
 
 - [`docs/DATOS.md`](docs/DATOS.md) — qué es real, qué es estimado y cómo conectar datos oficiales.
-- [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md) — cómo está hecho y cómo migrar a Next.js + Supabase.
-- [`docs/ACTIVOS-Y-DISENO.md`](docs/ACTIVOS-Y-DISENO.md) — **inventario de imágenes y vídeos, con los prompts listos para generarlos**.
+- [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md) — cómo está hecho por dentro.
+- [`docs/ACTIVOS-Y-DISENO.md`](docs/ACTIVOS-Y-DISENO.md) — inventario de imágenes y vídeos, con los prompts para generarlos.
+- [`docs/arquetipo/`](docs/arquetipo/) — arquetipo de usuario en PDF.
 
 ## Licencia
 

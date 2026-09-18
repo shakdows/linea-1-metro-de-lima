@@ -1,72 +1,102 @@
 # Arquitectura
 
-## Hoy: HTML, CSS y JavaScript, sin build
-
-La decisión fue deliberada: el sitio se abre, se lee y se despliega sin instalar
-nada. Pesa pocos KB, funciona sin conexión y cualquiera puede editarlo.
+La aplicación que se publica vive en [`web/`](../web/). Una versión anterior,
+hecha con HTML y JavaScript sin build, sirvió de prototipo y ya no forma parte
+del repositorio.
 
 ```
-navegador
-│
-├── data.js        Modelo de dominio (26 estaciones) + utilidades L1.*
-├── ui.js          Componentes: selects, mapa, popover, gráfico, trenes, avisos
-├── planner.js     Cálculo del viaje + animación del recorrido
-├── assistant.js   Intérprete de preguntas por reglas
-├── app.js         Portada
-├── estacion.js    Ficha de estación
-├── mapa.js        Mapa esquemático + Leaflet
-│
-└── sw.js          Service worker (cache-first) → PWA instalable
+web/
+├── Next.js 16 (App Router, exportación estática)
+├── TypeScript
+├── Tailwind CSS v4 (tokens en @theme)
+├── Framer Motion   → transiciones y posición del tren
+├── Lucide          → iconografía
+└── Leaflet + OSM   → mapa geográfico
 ```
 
-**Sin dependencias propias.** Solo dos recursos externos, ambos con alternativa:
+## Un armazón, ocho módulos
 
-| Recurso | Para qué | Si falla |
+La aplicación no tiene páginas: tiene un **armazón persistente** y un área de
+trabajo que se reemplaza.
+
+```
+AppShell
+├── Sidebar      (212 px, fija, oscura)   ── no se desmonta
+├── Topbar       (56 px: buscador, estado, avisos)
+├── main         ── AnimatePresence, 160 ms de fundido por módulo
+│    └── HomeWorkspace │ MapWorkspace │ PlanWorkspace │ StationsWorkspace
+│        CardWorkspace │ ScheduleWorkspace │ AlertsWorkspace │ AssistantWorkspace
+└── MobileTabs   (52 px, solo móvil: 4 pestañas + hoja «Más»)
+
+StationDrawer    ── cajón lateral derecho, por encima del armazón
+```
+
+`app/page.tsx` es el único dueño del estado: módulo activo, reloj, estación
+inspeccionada, señales de dibujo del mapa y —a través de `useTrip`— todo el
+viaje. Los módulos reciben lo que necesitan por props y no hablan entre sí.
+
+Esa elevación del estado es lo que permite que una ruta calculada en Inicio, o
+propuesta por el asistente, ya esté cargada al abrir el mapa: nadie recalcula
+nada, solo cambia el módulo visible.
+
+### Por qué un cajón lateral y no un modal
+
+El inspector de estación (`StationDrawer`) entra desde la derecha y deja el
+mapa o el listado visibles. Un modal centrado obligaría a cerrarlo para
+recordar de dónde venías; el cajón conserva el contexto, que es lo que hace una
+herramienta de trabajo y no una web de consulta.
+
+## Capas de datos
+
+| Capa | Archivos | Responsabilidad |
 |---|---|---|
-| Google Fonts (Plus Jakarta Sans + Caveat) | Tipografía | Cae a la fuente del sistema |
-| Leaflet + OpenStreetMap | Mapa geográfico de `mapa.html` | Muestra un aviso; el esquema sigue funcionando |
+| **Datos** | `data/stations.ts`, `data/route.ts`, `data/card.ts` | Constantes: estaciones, trazado, frecuencias, afluencia, avisos, tarjeta |
+| **Dominio** | `lib/trip.ts`, `lib/assistant.ts` | Tramos, próximos trenes, afluencia, formatos de hora, asistente por reglas |
+| **Estado** | `hooks/useTrip.ts`, `hooks/useTrainAnimation.ts`, `hooks/useGeolocation.ts` | Selección, máquina de estados del viaje, animación, ubicación |
+| **Vista** | `components/**` | Sin cálculos propios: todo lo que muestran viene derivado de arriba |
 
-### Convenciones
+Cambiar una constante de `data/` se propaga por sí solo a todos los módulos.
 
-- **Todo en español**, incluidos los nombres de funciones y variables.
-- **Variables CSS** en `:root` para color, radio, sombra y tipografía.
-- **Mobile first**: el CSS base es móvil; `@media (min-width: 960px)` añade el
-  escritorio (mapa horizontal, navegación superior).
-- **Accesibilidad**: cada estación es un `<button>` real, hay `aria-label`,
-  `aria-live` en el estado del servicio y soporte de `prefers-reduced-motion`.
+## Dos decisiones que conviene entender
 
-## Mañana: Next.js + Supabase
+**La posición del tren no vive en el estado de React.** Si viviera ahí, cada
+fotograma provocaría un render del árbol completo. Es un `MotionValue` de
+Framer Motion: `MetroMap` se suscribe con `position.on("change", …)` y mueve el
+marcador de Leaflet directamente. React solo vuelve a renderizar en eventos
+discretos —llegada a una estación, pausa, fin del tramo—.
 
-Cuando haga falta datos en tiempo real, cuentas de usuario o favoritos:
+**Exportación estática.** `output: "export"` genera HTML, CSS y JS planos en
+`web/out`: se publica en Vercel o en GitHub Pages sin servidor. Cuando haga
+falta datos en vivo, basta con quitar esa línea y convertir los paneles que
+leen datos en Server Components.
 
-```
-Frontend                      Backend
-├── Next.js (App Router)      ├── Supabase Postgres
-├── TypeScript                │   ├── estaciones
-├── Tailwind CSS              │   ├── horarios
-├── Framer Motion             │   ├── alertas
-└── Mapbox o Leaflet          │   └── afluencia_historica
-                              ├── Supabase Auth (tarjeta, favoritos)
-Vercel                        └── Edge Functions (ingesta en tiempo real)
-```
+## Trampas del entorno estático
 
-**Ruta de migración, en orden:**
+- **Hidratación y relojes.** El HTML se genera en el build, con la hora de esa
+  máquina. Cualquier `new Date()` en el primer render produce un desajuste al
+  hidratar. El reloj arranca en una hora fija (`CLOCK_FALLBACK`) y se pone en
+  hora dentro de un `useEffect`; las horas se formatean a mano en lugar de con
+  `toLocaleTimeString`, que usa separadores distintos en Node y en el navegador.
+- **`localStorage` no existe en el build.** Las rutas frecuentes se leen en un
+  `useEffect`, nunca en el primer render.
+- **Apilado de Leaflet.** Sus paneles usan `z-index` 400–700. Sin
+  `isolation: isolate` en `.leaflet-container`, se pintan por encima de los
+  cajones y hojas de la aplicación.
+- **Las etiquetas de avenida tapan las estaciones** si no llevan
+  `pointer-events: none`.
+- **Los efectos que dibujan el mapa dependen de un estado `mapReady`**, no de
+  los `ref`. Un `ref` no provoca re-render: sin ese estado, los efectos corrían
+  una sola vez, antes de que resolviera el import dinámico de Leaflet, y las
+  estaciones no se dibujaban nunca.
+- **`vercel.json` no debe llevar `trailingSlash` ni `cleanUrls`**: duplicarían
+  la barra final que ya añade `next.config.ts` y los `.css` y `.js` acabarían
+  redirigidos a un 404.
 
-1. `npx create-next-app@latest --ts --tailwind`
-2. Portar `data.js` a `lib/linea1.ts` — es TypeScript casi sin tocar.
-3. Convertir cada bloque de `index.html` en un componente. El HTML ya está
-   partido exactamente por estas fronteras:
+## Si algún día hay datos reales
 
-   ```
-   Navbar · Hero · TripPlanner · TripResult · MetroLineMap · StationTooltip
-   NextTrains · CrowdingChart · MetroCard · ServiceAlerts · AIChat
-   NearbyStations · Footer
-   ```
-4. Mover el CSS a `globals.css` manteniendo las mismas variables.
-5. Cargar los datos con Server Components + `revalidate`.
-6. El asistente pasa a una Route Handler (`app/api/asistente/route.ts`) que
-   llama a un modelo con los datos de la línea como contexto; el hueco ya está
-   previsto en `Asistente.responderRemoto()`.
+Sustituir las constantes de `data/stations.ts` por una llamada a la API y
+`nextTrains()` por el endpoint de llegadas. El resto del código no cambia,
+porque nada más lee los datos directamente.
 
 ### Esquema de base de datos sugerido
 
@@ -110,49 +140,13 @@ create table afluencia_historica (
 );
 ```
 
+El asistente pasaría a una Route Handler (`app/api/asistente/route.ts`) que
+llama a un modelo con los datos de la línea como contexto; hoy `answer()` de
+`lib/assistant.ts` responde con reglas y sin salir del navegador.
+
 ## Ideas pendientes
 
-- Favoritos tipo «Casa → Trabajo» guardados en `localStorage` (ya hay base: `linea1:prefs`).
-- Notificaciones push de interrupciones (requiere el service worker + Web Push).
-- Vista de estación más cercana usando la geolocalización que ya existe.
-- Modo oscuro: las variables CSS ya están centralizadas, solo falta el bloque
+- Notificaciones de interrupciones (requiere service worker + Web Push).
+- Modo oscuro: los tokens ya están centralizados en `@theme`, falta el bloque
   `@media (prefers-color-scheme: dark)`.
 - Traducción a quechua e inglés.
-
----
-
-## La aplicación de `web/`
-
-La aplicación que se publica vive en `web/`. Las secciones anteriores de este
-documento describen la primera versión, hecha sin build, que sirvió de
-prototipo y ya no forma parte del despliegue.
-
-```
-web/
-├── Next.js 16 (App Router, exportación estática)
-├── TypeScript
-├── Tailwind CSS v4 (tokens en @theme)
-├── Framer Motion   → transiciones y posición del tren
-├── Lucide          → iconografía
-└── Leaflet + OSM   → mapa geográfico
-```
-
-**Por qué exportación estática.** `output: "export"` genera HTML, CSS y JS
-planos en `web/out`: se publica en GitHub Pages o en Vercel sin servidor, y
-mantiene la promesa del proyecto de no necesitar infraestructura. Cuando haga
-falta datos en vivo, basta con quitar esa línea y convertir los paneles en
-Server Components.
-
-**Una decisión que conviene entender.** La posición del tren no vive en el
-estado de React sino en un `MotionValue`. Si viviera en el estado, cada
-fotograma provocaría un render del árbol completo. Al ser un `MotionValue`,
-`MetroMap` se suscribe con `position.on("change", …)` y mueve el marcador de
-Leaflet directamente: React solo vuelve a renderizar en eventos discretos
-(llegada a una estación, pausa, fin del tramo).
-
-**Hidratación y relojes.** El HTML se genera en el build, con la hora de esa
-máquina. Cualquier `new Date()` en el primer render produce un desajuste al
-hidratar. Por eso el reloj arranca en una hora fija (`CLOCK_FALLBACK`) y se
-pone en hora dentro de un `useEffect`, y las horas se formatean a mano en lugar
-de con `toLocaleTimeString`, que usa separadores distintos en Node y en el
-navegador.

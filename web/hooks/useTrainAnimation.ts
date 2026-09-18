@@ -1,6 +1,6 @@
 "use client";
 
-import { useMotionValue, type MotionValue } from "framer-motion";
+import { useMotionValue } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export type TrainPhase = "idle" | "traveling" | "station-stop" | "paused" | "completed";

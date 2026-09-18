@@ -96,12 +96,20 @@ export interface ServiceAlert {
   title: string;
   detail: string;
   date: string;
+  /** Tramo o estación afectada. Sin valor, el aviso alcanza a toda la línea */
+  scope?: string;
+  /** Si ya está resuelto, el aviso queda como histórico */
+  resolved?: boolean;
 }
 
 export const ALERTS: ServiceAlert[] = [
-  { id: "al-1", level: "aviso", title: "Mantenimiento programado", detail: "El servicio tendrá frecuencias modificadas entre las 10:00 a. m. y 2:00 p. m. por trabajos de mantenimiento.", date: "2026-09-17" },
-  { id: "al-2", level: "info", title: "Horario extendido por feriado", detail: "El servicio operará hasta las 23:30 durante el fin de semana largo.", date: "2026-09-16" },
-  { id: "al-3", level: "info", title: "Consulta tu saldo desde la web", detail: "Ya puedes asociar tu DNI y revisar el saldo sin ir a la estación.", date: "2026-09-12" },
+  { id: "al-1", level: "aviso", title: "Mantenimiento programado", detail: "El servicio tendrá frecuencias modificadas entre las 10:00 a. m. y 2:00 p. m. por trabajos de mantenimiento en la vía.", date: "2026-09-17", scope: "Villa El Salvador – Atocongo" },
+  { id: "al-2", level: "info", title: "Horario extendido por feriado", detail: "El servicio operará hasta las 23:30 durante el fin de semana largo. El último tren sale de cada terminal a esa hora.", date: "2026-09-16" },
+  { id: "al-3", level: "aviso", title: "Aforo alto en hora punta", detail: "Entre las 6:30 y las 8:30 a. m. la afluencia estimada supera el 90 %. Se recomienda prever mayor tiempo de espera en andén.", date: "2026-09-15", scope: "Gamarra, Miguel Grau y Bayóvar" },
+  { id: "al-4", level: "critico", title: "Interrupción por falla eléctrica", detail: "El servicio estuvo detenido 42 minutos por una falla en la alimentación eléctrica. Se restableció la operación con trenes adicionales.", date: "2026-09-14", scope: "Miguel Grau – El Ángel", resolved: true },
+  { id: "al-5", level: "info", title: "Consulta tu saldo desde la web", detail: "Ya puedes asociar tu DNI y revisar el saldo de la tarjeta sin acercarte a la estación.", date: "2026-09-12" },
+  { id: "al-6", level: "info", title: "Nuevos validadores en Gamarra", detail: "Se habilitaron cuatro validadores adicionales en el acceso principal para reducir las colas de ingreso.", date: "2026-09-09", scope: "Gamarra" },
+  { id: "al-7", level: "aviso", title: "Cierre temporal de una salida", detail: "La salida hacia Av. Aviación permanecerá cerrada por obras. Usa el acceso alterno señalizado.", date: "2026-09-05", scope: "La Cultura", resolved: true },
 ];
 
 export type ServiceLevel = "normal" | "demoras" | "interrumpido";
