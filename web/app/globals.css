@@ -189,9 +189,10 @@ body {
   background: rgba(232, 242, 254, .92); backdrop-filter: blur(8px);
   border: 1px solid rgba(191, 219, 254, .9); border-radius: 999px; padding: 3px 9px;
   box-shadow: 0 1px 4px rgba(18, 24, 22, .08);
-  transition: transform 200ms ease-out, background 200ms ease-out; pointer-events: auto;
+  /* Son rótulos informativos: si capturan el puntero tapan las estaciones
+     que quedan debajo y estas dejan de poder seleccionarse. */
+  pointer-events: none;
 }
-.avenue-pill:hover { background: #dbeafe; transform: translate(-50%, -34px) scale(1.05); }
 
 /* ---- Cristal sobre el mapa ---- */
 .glass {
