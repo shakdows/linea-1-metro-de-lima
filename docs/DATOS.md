@@ -79,3 +79,22 @@ Proyecto sin ánimo de lucro, sin relación con el operador de la Línea 1 ni co
 la Autoridad de Transporte Urbano. Los nombres de estaciones se usan de forma
 descriptiva. Si se incorporan la marca o los datos oficiales, hay que contar con
 el permiso correspondiente.
+
+---
+
+## Fotografías de las estaciones
+
+La aplicación muestra fotografías reales en la ficha de cada estación, en el
+listado y en la tarjeta que aparece al pasar el puntero sobre el mapa.
+
+- **21 de las 26 estaciones** tienen fotografía (`web/public/estaciones/*.webp`).
+- Sin foto: Parque Industrial, Pumacahua, San Juan, Atocongo y Ayacucho. La
+  interfaz usa un marcador con el color de marca cuando falta.
+- Los originales están en `fotos linea 1/estaciones/`; las versiones servidas
+  son WebP de 880×560 px, que reducen el peso de 5,5 MB a unos 1,5 MB.
+
+> ⚠️ **Derechos de imagen.** Las fotografías las aportó el autor del proyecto y
+> varias parecen material de prensa con personas identificables. Antes de
+> publicar el sitio fuera de un contexto académico conviene verificar la
+> licencia de cada una o sustituirlas por fotografías propias. La aplicación
+> funciona sin ellas: basta con quitar el campo `image` en `data/stations.ts`.

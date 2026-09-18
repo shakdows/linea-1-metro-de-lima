@@ -5,6 +5,24 @@ import { STATIONS, stationById } from "@/data/stations";
 import { buildTrip, type TripMode } from "@/lib/trip";
 import { useTrainAnimation } from "./useTrainAnimation";
 
+const CLAVE_FRECUENTES = "linea1:frecuentes";
+
+export interface FrequentRoute {
+  originId: string;
+  destinationId: string;
+  label: string;
+  minutes: number;
+}
+
+function leerFrecuentes(): FrequentRoute[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem(CLAVE_FRECUENTES) ?? "[]");
+  } catch {
+    return [];
+  }
+}
+
 export type TripStatus =
   | "idle"
   | "ready"
@@ -30,6 +48,10 @@ export function useTrip({ animationSpeed = 1 }: { animationSpeed?: number } = {}
   const [status, setStatus] = useState<TripStatus>("idle");
   const [activeLeg, setActiveLeg] = useState<LegId>("outbound");
   const [calculating, setCalculating] = useState(false);
+  const [frequents, setFrequents] = useState<FrequentRoute[]>([]);
+
+  /* Se leen ya en el navegador: en el HTML exportado no existe localStorage */
+  useEffect(() => setFrequents(leerFrecuentes()), []);
 
   const trip = useMemo(
     () => buildTrip(originId, destinationId, mode),
@@ -72,8 +94,24 @@ export function useTrip({ animationSpeed = 1 }: { animationSpeed?: number } = {}
     window.setTimeout(() => {
       setCalculating(false);
       setStatus("ready");
+
+      /* La ruta recién calculada encabeza las frecuentes */
+      if (!trip) return;
+      const entry: FrequentRoute = {
+        originId: trip.origin.id,
+        destinationId: trip.destination.id,
+        label: `${trip.origin.name} → ${trip.destination.name}`,
+        minutes: trip.outbound.minutes,
+      };
+      setFrequents((prev) => {
+        const next = [entry, ...prev.filter((r) => r.label !== entry.label)].slice(0, 4);
+        try {
+          localStorage.setItem(CLAVE_FRECUENTES, JSON.stringify(next));
+        } catch { /* modo privado */ }
+        return next;
+      });
     }, 450);
-  }, [train]);
+  }, [train, trip]);
 
   const swap = useCallback(() => {
     setOriginId(destinationId);
@@ -154,6 +192,7 @@ export function useTrip({ animationSpeed = 1 }: { animationSpeed?: number } = {}
 
     /* ruta */
     trip,
+    frequents,
     leg,
     activeLeg,
     calculating,

@@ -80,91 +80,134 @@ body {
    ========================================================================= */
 
 .leaflet-container {
-  font-family: var(--font-sans);
-  background: #eef2f0;
+  font-family: var(--font-sans); background: #eaeef0;
+  /* Los panes de Leaflet llevan z-index 400-700. Sin un contexto de
+     apilamiento propio se colocan por encima de la hoja inferior y de los
+     paneles flotantes de la aplicación. */
+  position: relative; z-index: 0; isolation: isolate;
 }
 .leaflet-control-zoom a {
-  border-radius: 10px !important;
-  color: var(--color-tinta) !important;
-  border-color: var(--color-borde) !important;
+  border-radius: 10px !important; color: var(--color-tinta) !important;
+  border-color: rgba(255, 255, 255, .6) !important;
+  background: rgba(255, 255, 255, .9) !important;
+  backdrop-filter: blur(10px); box-shadow: var(--shadow-suave);
 }
 .leaflet-control-attribution {
-  font-size: 10px;
-  background: rgba(255, 255, 255, .78) !important;
+  font-size: 10px; background: rgba(255, 255, 255, .7) !important;
+  backdrop-filter: blur(6px); border-radius: 6px 0 0 0;
 }
+.leaflet-marker-icon:focus { outline: none; }
 
 /* ---- Estación ---- */
+.station-pin { position: relative; display: block; }
+
 .station-dot {
   display: grid; place-items: center;
   width: 15px; height: 15px; border-radius: 50%;
   background: #fff; border: 3.5px solid var(--color-inactivo);
-  transition: transform 200ms ease-out, border-color 200ms ease-out, background 200ms ease-out;
-  cursor: pointer;
+  transition: transform 220ms cubic-bezier(.2, .8, .3, 1), border-color 220ms, background 220ms, box-shadow 220ms;
+  cursor: pointer; box-shadow: 0 1px 3px rgba(18, 24, 22, .18);
 }
-.station-dot.is-terminal { width: 18px; height: 18px; border-width: 4px; }
+.station-dot.is-terminal { width: 19px; height: 19px; border-width: 4.5px; }
 .station-dot.is-route { border-color: var(--color-verde); }
 .station-dot.is-route.is-return { border-color: var(--color-azul); }
-.station-dot.is-origin { background: var(--color-verde); border-color: var(--color-verde); }
-.station-dot.is-destination { box-shadow: 0 0 0 5px rgba(0, 155, 58, .22); }
-.station-dot.is-visited { background: var(--color-verde); border-color: var(--color-verde-oscuro); }
+.station-dot.is-origin { background: var(--color-verde); border-color: #fff; box-shadow: 0 0 0 3px var(--color-verde), 0 2px 6px rgba(18,24,22,.25); }
+.station-dot.is-destination { background: #fff; border-color: var(--color-verde); box-shadow: 0 0 0 5px rgba(0, 155, 58, .22), 0 2px 6px rgba(18,24,22,.2); }
+.station-dot.is-visited { background: var(--color-verde); border-color: #ffffff; box-shadow: 0 0 0 2px var(--color-verde); }
 .station-dot.is-current {
   background: var(--color-verde); border-color: #fff;
   box-shadow: 0 0 0 3px var(--color-verde);
-  animation: halo 1.6s ease-out infinite;
-  transform: scale(1.2);
+  animation: halo 1.6s ease-out infinite; transform: scale(1.25);
 }
-.leaflet-marker-icon:hover .station-dot { transform: scale(1.2); }
+.station-dot.is-nearest { border-color: #1687f8; box-shadow: 0 0 0 4px rgba(22, 135, 248, .2); }
 .station-dot .tick {
   width: 5px; height: 8px; margin-top: -2px;
   border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
 }
+.leaflet-marker-icon:hover .station-dot { transform: scale(1.25); }
 
 .station-label {
   position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
   white-space: nowrap; font-size: 10.5px; font-weight: 700; line-height: 1.1;
-  color: var(--color-tinta-suave);
+  color: #4b5850; pointer-events: none;
   text-shadow: 0 1px 2px #fff, 0 -1px 2px #fff, 1px 0 2px #fff, -1px 0 2px #fff;
-  pointer-events: none;
 }
-.station-label.is-route { color: var(--color-verde-oscuro); font-size: 11.5px; }
+.station-label.is-route { color: var(--color-verde-oscuro); }
+.station-label.is-key {
+  font-size: 11.5px; font-weight: 800; color: var(--color-tinta);
+  background: rgba(255, 255, 255, .9); border-radius: 7px; padding: 2px 7px;
+  box-shadow: 0 1px 4px rgba(18, 24, 22, .12); text-shadow: none;
+}
+.station-label.is-key.is-route { color: var(--color-verde-oscuro); }
 
-/* ---- Etiqueta de avenida ---- */
-.avenue-pill {
-  position: absolute; transform: translate(-50%, -34px);
-  white-space: nowrap; font-size: 10.5px; font-weight: 700;
-  color: #1256a8; background: rgba(230, 241, 254, .95);
-  border: 1px solid #bfdbfe; border-radius: 999px; padding: 3px 9px;
-  box-shadow: 0 1px 3px rgba(18, 24, 22, .08);
-  transition: transform 200ms ease-out, background 200ms ease-out;
-  pointer-events: auto;
+/* ---- Tarjeta con foto, al pasar el puntero ---- */
+.station-card {
+  position: absolute; bottom: 26px; left: 50%;
+  width: 190px; transform: translate(-50%, 6px) scale(.96);
+  opacity: 0; pointer-events: none; transform-origin: bottom center;
+  background: rgba(255, 255, 255, .92); backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, .8); border-radius: 14px; overflow: hidden;
+  box-shadow: var(--shadow-alta); z-index: 700;
+  transition: opacity 200ms ease-out, transform 200ms cubic-bezier(.2, .8, .3, 1);
 }
-.avenue-pill:hover { background: #dbeafe; transform: translate(-50%, -36px) scale(1.04); }
+.leaflet-marker-icon:hover .station-card { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.station-card img { display: block; width: 100%; height: 92px; object-fit: cover; }
+.station-card__body { display: block; padding: 8px 11px 10px; }
+.station-card b { display: block; font-size: 12.5px; font-weight: 800; letter-spacing: -.01em; color: var(--color-tinta); }
+.station-card i { display: block; font-size: 10.5px; font-style: normal; color: var(--color-tinta-suave); margin-top: 1px; }
 
 /* ---- Tren ---- */
 .train-pin {
-  display: grid; place-items: center;
-  width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center; position: relative;
+  width: 40px; height: 40px; border-radius: 50%;
   color: #fff; background: var(--color-verde);
-  box-shadow: 0 4px 14px rgba(18, 24, 22, .3);
-  border: 3px solid #fff; cursor: pointer;
-  transition: background 250ms ease-out;
+  box-shadow: 0 6px 18px rgba(0, 107, 44, .45); border: 3px solid #fff; cursor: pointer;
+  transition: background 280ms ease-out;
 }
-.train-pin.vuelta { background: var(--color-azul); }
-.train-pin svg { width: 19px; height: 19px; transform: rotate(calc(var(--angle, 0deg) - 90deg)); transition: transform 300ms ease-out; }
+.train-pin.vuelta { background: var(--color-azul); box-shadow: 0 6px 18px rgba(11, 95, 192, .45); }
+.train-pin svg {
+  width: 20px; height: 20px;
+  transform: rotate(calc(var(--angle, 0deg) - 90deg));
+  transition: transform 340ms cubic-bezier(.2, .8, .3, 1);
+}
 .train-pin::before {
-  content: ''; position: absolute; inset: -6px; border-radius: 50%;
-  border: 2px solid currentColor; opacity: .35; animation: pulso 2s ease-out infinite;
+  content: ''; position: absolute; inset: -7px; border-radius: 50%;
+  border: 2px solid currentColor; opacity: .3; animation: pulso 2s ease-out infinite;
 }
 
-/* ---- Ubicación del usuario ---- */
+/* ---- Ubicación ---- */
 .user-dot {
   display: block; width: 18px; height: 18px; border-radius: 50%;
   background: #1687f8; border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgba(22, 135, 248, .5);
+  box-shadow: 0 0 0 6px rgba(22, 135, 248, .18), 0 2px 8px rgba(22, 135, 248, .5);
 }
 
-.station-label.is-key {
-  font-size: 12px; font-weight: 800; color: var(--color-tinta);
-  background: rgba(255, 255, 255, .88); border-radius: 6px; padding: 1px 5px;
+/* ---- Etiqueta de avenida ---- */
+.avenue-pill {
+  position: absolute; transform: translate(-50%, -32px); white-space: nowrap;
+  font-size: 10px; font-weight: 700; color: #1256a8;
+  background: rgba(232, 242, 254, .92); backdrop-filter: blur(8px);
+  border: 1px solid rgba(191, 219, 254, .9); border-radius: 999px; padding: 3px 9px;
+  box-shadow: 0 1px 4px rgba(18, 24, 22, .08);
+  transition: transform 200ms ease-out, background 200ms ease-out; pointer-events: auto;
 }
-.station-label.is-key.is-route { color: var(--color-verde-oscuro); }
+.avenue-pill:hover { background: #dbeafe; transform: translate(-50%, -34px) scale(1.05); }
+
+/* ---- Cristal sobre el mapa ---- */
+.glass {
+  background: rgba(255, 255, 255, .78);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, .7);
+  box-shadow: 0 8px 32px rgba(18, 24, 22, .12);
+}
+.glass-oscuro {
+  background: rgba(15, 22, 20, .82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, .1);
+  color: #fff;
+}
+
+/* Números que no bailan al cambiar */
+.tabular { font-variant-numeric: tabular-nums; }

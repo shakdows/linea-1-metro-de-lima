@@ -10,34 +10,37 @@ import { STATIONS, type Station } from "@/data/stations";
 export interface MapHandle {
   fitRoute: () => void;
   fitAll: () => void;
+  flyTo: (station: Station) => void;
 }
 
 interface Props {
-  /** Estaciones del tramo activo, en orden de recorrido */
   routeStations: Station[];
-  /** Estaciones del tramo de ida (verde) */
   outboundStations: Station[];
-  /** Estaciones del tramo de vuelta (azul), o null si es solo ida */
   inboundStations: Station[] | null;
-  /** Índice fraccional del tren dentro del tramo activo */
   position: MotionValue<number>;
-  /** Índice de la última estación alcanzada, para pintar lo ya recorrido */
   visitedCount: number;
   trainVisible: boolean;
   trainVariant: "ida" | "vuelta";
   originId: string;
   destinationId: string;
   userLocation: { latitude: number; longitude: number } | null;
+  nearestId?: string;
   /** Cambiar este número reencuadra el mapa sobre la ruta */
   fitSignal: number;
-  onSelectStation: (station: Station, point: { x: number; y: number }) => void;
+  /** La cámara sigue al tren mientras circula */
+  followTrain: boolean;
+  /** Dibuja la ruta progresivamente al calcularla */
+  drawSignal: number;
+  onSelectStation: (station: Station) => void;
   onTrainClick: () => void;
   onReady?: (handle: MapHandle) => void;
 }
 
 const VERDE = "#009B3A";
-const VERDE_OSCURO = "#006B2C";
+const VERDE_OSCURO = "#00521F";
+const VERDE_CLARO = "#6FD694";
 const AZUL = "#1687F8";
+const AZUL_OSCURO = "#0B5FC0";
 const GRIS = "#CBD5E1";
 
 export default function MetroMap({
@@ -51,7 +54,10 @@ export default function MetroMap({
   originId,
   destinationId,
   userLocation,
+  nearestId,
   fitSignal,
+  followTrain,
+  drawSignal,
   onSelectStation,
   onTrainClick,
   onReady,
@@ -61,26 +67,27 @@ export default function MetroMap({
   const leafletRef = useRef<typeof import("leaflet") | null>(null);
 
   const baseLineRef = useRef<Polyline | null>(null);
-  const outboundRef = useRef<Polyline | null>(null);
-  const inboundRef = useRef<Polyline | null>(null);
+  const pendingRef = useRef<Polyline | null>(null);
   const travelledRef = useRef<Polyline | null>(null);
+  const inboundRef = useRef<Polyline | null>(null);
+  const walkRef = useRef<Polyline | null>(null);
   const stationsLayerRef = useRef<LayerGroup | null>(null);
   const avenuesLayerRef = useRef<LayerGroup | null>(null);
   const trainRef = useRef<Marker | null>(null);
   const userRef = useRef<Marker | null>(null);
 
-  /* La ruta cambia; el handler que se expone fuera debe leer la actual */
   const routeRef = useRef(routeStations);
   routeRef.current = routeStations;
+  const followRef = useRef(followTrain);
+  followRef.current = followTrain;
 
   const [tilesFailed, setTilesFailed] = useState(false);
   const [zoom, setZoom] = useState(11);
-  /* El mapa se crea tras un import dinámico, es decir, después del primer
-     render. Sin este estado los efectos que dibujan capas se ejecutarían una
-     sola vez, cuando `mapRef` todavía está vacío, y no volverían a correr. */
+  /* El mapa se crea tras un import dinámico, o sea después del primer render:
+     sin este estado los efectos de dibujo correrían con `mapRef` aún vacío. */
   const [mapReady, setMapReady] = useState(false);
 
-  /* ------------------------------------------------- crear el mapa una vez */
+  /* -------------------------------------------------- crear el mapa (1 vez) */
   useEffect(() => {
     let cancelled = false;
 
@@ -91,50 +98,45 @@ export default function MetroMap({
 
       const map = L.map(containerRef.current, {
         zoomControl: false,
-        attributionControl: true,
         scrollWheelZoom: false,
+        zoomSnap: 0.25,
       });
       mapRef.current = map;
 
-      const tiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 18,
-        attribution: "© colaboradores de OpenStreetMap",
-      });
+      /* Cartografía clara y sobria: deja respirar el trazado de la línea */
+      const tiles = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        {
+          maxZoom: 19,
+          subdomains: "abcd",
+          attribution: "© OpenStreetMap · © CARTO",
+        },
+      );
       tiles.on("tileerror", () => setTilesFailed(true));
       tiles.addTo(map);
 
-      L.control.zoom({ position: "topright" }).addTo(map);
-      setZoom(map.getZoom());
-      map.on("zoomend", () => setZoom(map.getZoom()));
-      setMapReady(true);
+      L.control.zoom({ position: "bottomright" }).addTo(map);
 
-      /* Línea completa en gris, siempre visible por debajo */
+      /* Orden de pintado: resto de línea → pendiente → vuelta → recorrido */
       baseLineRef.current = L.polyline(
         STATIONS.map((s) => [s.latitude, s.longitude] as LatLng),
-        { color: GRIS, weight: 5, opacity: 0.9, lineCap: "round" },
+        { color: GRIS, weight: 4, opacity: 0.85, lineCap: "round" },
       ).addTo(map);
 
-      inboundRef.current = L.polyline([], {
-        color: AZUL,
-        weight: 5,
-        opacity: 0.95,
-        lineCap: "round",
-        offset: 0,
-      } as never).addTo(map);
-
-      outboundRef.current = L.polyline([], {
-        color: VERDE,
-        weight: 6,
-        opacity: 0.95,
-        lineCap: "round",
+      walkRef.current = L.polyline([], {
+        color: "#64748B", weight: 3, dashArray: "2 8", lineCap: "round", opacity: 0.9,
       }).addTo(map);
 
-      /* Tramo ya recorrido, por encima del resto */
+      inboundRef.current = L.polyline([], {
+        color: AZUL, weight: 5, opacity: 0.9, lineCap: "round",
+      }).addTo(map);
+
+      pendingRef.current = L.polyline([], {
+        color: VERDE_CLARO, weight: 6, opacity: 0.95, lineCap: "round",
+      }).addTo(map);
+
       travelledRef.current = L.polyline([], {
-        color: VERDE_OSCURO,
-        weight: 7,
-        opacity: 1,
-        lineCap: "round",
+        color: VERDE_OSCURO, weight: 7, opacity: 1, lineCap: "round",
       }).addTo(map);
 
       avenuesLayerRef.current = L.layerGroup().addTo(map);
@@ -142,19 +144,23 @@ export default function MetroMap({
 
       map.fitBounds(
         STATIONS.map((s) => [s.latitude, s.longitude] as LatLng),
-        { padding: [40, 40] },
+        { padding: [50, 50] },
       );
+      setZoom(map.getZoom());
+      map.on("zoomend", () => setZoom(map.getZoom()));
+      setMapReady(true);
 
       onReady?.({
         fitRoute: () => {
           const pts = routeRef.current.map((s) => [s.latitude, s.longitude] as LatLng);
-          if (pts.length) map.fitBounds(pts, { padding: [90, 90], maxZoom: 13.5 });
+          if (pts.length) map.flyToBounds(pts, { padding: [100, 100], maxZoom: 13.5, duration: 0.8 });
         },
         fitAll: () =>
-          map.fitBounds(
+          map.flyToBounds(
             STATIONS.map((s) => [s.latitude, s.longitude] as LatLng),
-            { padding: [40, 40] },
+            { padding: [50, 50], duration: 0.8 },
           ),
+        flyTo: (station) => map.flyTo([station.latitude, station.longitude], 15, { duration: 0.9 }),
       });
     })();
 
@@ -166,13 +172,15 @@ export default function MetroMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ------------------------------------------- etiquetas de avenida (1 vez) */
+  /* ------------------------------------------------- etiquetas de avenida */
   useEffect(() => {
     const L = leafletRef.current;
     const layer = avenuesLayerRef.current;
     if (!L || !layer) return;
 
     layer.clearLayers();
+    if (zoom < 11.5) return;
+
     AVENUES.forEach((avenue) => {
       const icon = L.divIcon({
         className: "",
@@ -181,32 +189,46 @@ export default function MetroMap({
       });
       L.marker(avenueAnchor(avenue), { icon, interactive: false, keyboard: false }).addTo(layer);
     });
-  }, [mapReady]);
+  }, [mapReady, zoom]);
 
-  /* ------------------------------------------------ polilíneas de la ruta */
+  /* ------------------------------------------- polilíneas: los 3 estados */
   useEffect(() => {
     const toPath = (list: Station[]) => list.map((s) => [s.latitude, s.longitude] as LatLng);
-    outboundRef.current?.setLatLngs(toPath(outboundStations));
-    inboundRef.current?.setLatLngs(inboundStations ? toPath(inboundStations) : []);
-  }, [mapReady, outboundStations, inboundStations]);
 
-  /* --------------------------------------------------- tramo ya recorrido */
-  useEffect(() => {
-    const travelled = travelledRef.current;
-    if (!travelled) return;
-    if (!trainVisible || visitedCount < 1) {
-      travelled.setLatLngs([]);
-      return;
-    }
-    travelled.setLatLngs(
-      routeStations
-        .slice(0, visitedCount + 1)
-        .map((s) => [s.latitude, s.longitude] as LatLng),
+    /* Lo ya recorrido en verde oscuro, lo pendiente en verde claro */
+    const done = trainVisible ? routeStations.slice(0, Math.max(1, visitedCount + 1)) : [];
+    const pending = trainVisible ? routeStations.slice(Math.max(0, visitedCount)) : outboundStations;
+
+    travelledRef.current?.setLatLngs(done.length > 1 ? toPath(done) : []);
+    travelledRef.current?.setStyle({
+      color: trainVariant === "ida" ? VERDE_OSCURO : AZUL_OSCURO,
+    });
+    pendingRef.current?.setLatLngs(toPath(pending));
+    pendingRef.current?.setStyle({
+      color: trainVisible ? (trainVariant === "ida" ? VERDE_CLARO : "#8AC2FB") : VERDE,
+    });
+    inboundRef.current?.setLatLngs(
+      inboundStations && !(trainVisible && trainVariant === "vuelta") ? toPath(inboundStations) : [],
     );
-    travelled.setStyle({ color: trainVariant === "ida" ? VERDE_OSCURO : "#0b63c5" });
-  }, [mapReady, routeStations, visitedCount, trainVisible, trainVariant]);
+  }, [mapReady, routeStations, outboundStations, inboundStations, visitedCount, trainVisible, trainVariant]);
 
-  /* ---------------------------------------------- marcadores de estación */
+  /* -------------------------------- dibujo progresivo al calcular la ruta */
+  useEffect(() => {
+    const line = pendingRef.current;
+    if (!mapReady || !line || drawSignal === 0 || outboundStations.length < 2) return;
+
+    const full = outboundStations.map((s) => [s.latitude, s.longitude] as LatLng);
+    let step = 0;
+    line.setLatLngs([full[0]]);
+    const id = setInterval(() => {
+      step += 1;
+      line.setLatLngs(full.slice(0, step + 1));
+      if (step >= full.length - 1) clearInterval(id);
+    }, Math.max(28, 420 / full.length));
+    return () => clearInterval(id);
+  }, [mapReady, drawSignal, outboundStations]);
+
+  /* --------------------------------------------- marcadores de estación */
   useEffect(() => {
     const L = leafletRef.current;
     const map = mapRef.current;
@@ -216,7 +238,7 @@ export default function MetroMap({
     layer.clearLayers();
     const routeIds = new Set(routeStations.map((s) => s.id));
     const visitedIds = new Set(
-      trainVisible ? routeStations.slice(0, visitedCount + 1).map((s) => s.id) : [],
+      trainVisible ? routeStations.slice(0, visitedCount).map((s) => s.id) : [],
     );
     const currentId = trainVisible ? routeStations[visitedCount]?.id : undefined;
 
@@ -236,50 +258,46 @@ export default function MetroMap({
         visited ? "is-visited" : "",
         isCurrent ? "is-current" : "",
         station.terminal ? "is-terminal" : "",
-      ]
-        .filter(Boolean)
-        .join(" ");
+        station.id === nearestId ? "is-nearest" : "",
+      ].filter(Boolean).join(" ");
 
-      /* Con muchas estaciones juntas las etiquetas se solapan, así que solo
-         se rotulan las relevantes y, al acercar el mapa, todas las de la ruta. */
-      const alwaysLabelled = isOrigin || isDestination || isCurrent || station.terminal;
-      const showLabel = alwaysLabelled || (inRoute && zoom >= 13.5) || zoom >= 14.5;
+      const key = isOrigin || isDestination || isCurrent || station.terminal;
+      const showLabel = key || (inRoute && zoom >= 12.5) || zoom >= 14;
       const label = showLabel
-        ? `<span class="station-label ${inRoute ? "is-route" : ""} ${alwaysLabelled ? "is-key" : ""}">${station.name}</span>`
+        ? `<span class="station-label ${inRoute ? "is-route" : ""} ${key ? "is-key" : ""}">${station.name}</span>`
         : "";
+
+      /* Tarjeta con fotografía al pasar el puntero */
+      const card = `
+        <span class="station-card">
+          ${station.image ? `<img src="${station.image}" alt="" loading="lazy" />` : ""}
+          <span class="station-card__body">
+            <b>${station.name}</b>
+            <i>${station.avenue}</i>
+          </span>
+        </span>`;
 
       const icon = L.divIcon({
         className: "",
-        html: `<span class="${classes}">${visited && !isCurrent ? "<i class='tick'></i>" : ""}</span>${label}`,
+        html: `<span class="station-pin">${card}<span class="${classes}">${
+          visited && !isCurrent ? "<i class='tick'></i>" : ""
+        }</span>${label}</span>`,
         iconSize: [18, 18],
         iconAnchor: [9, 9],
       });
 
-      const marker = L.marker([station.latitude, station.longitude], {
-        icon,
-        title: station.name,
-        riseOnHover: true,
-      }).addTo(layer);
-
-      marker.on("click", () => {
-        const p = map.latLngToContainerPoint([station.latitude, station.longitude]);
-        const rect = containerRef.current!.getBoundingClientRect();
-        onSelectStation(station, { x: rect.left + p.x, y: rect.top + p.y });
-      });
+      L.marker([station.latitude, station.longitude], {
+        icon, title: station.name, riseOnHover: true,
+      })
+        .addTo(layer)
+        .on("click", () => onSelectStation(station));
     });
   }, [
-    mapReady,
-    routeStations,
-    visitedCount,
-    trainVisible,
-    trainVariant,
-    originId,
-    destinationId,
-    zoom,
-    onSelectStation,
+    mapReady, routeStations, visitedCount, trainVisible, trainVariant,
+    originId, destinationId, nearestId, zoom, onSelectStation,
   ]);
 
-  /* ------------------------------------------------------ tren en el mapa */
+  /* ---------------------------------------------------- tren en el mapa */
   useEffect(() => {
     const L = leafletRef.current;
     const map = mapRef.current;
@@ -306,10 +324,10 @@ export default function MetroMap({
                      <path d="M4 11h16M8 20l-2 2M16 20l2 2"/>
                    </svg>
                  </span>`,
-          iconSize: [38, 38],
-          iconAnchor: [19, 19],
+          iconSize: [40, 40],
+          iconAnchor: [20, 20],
         });
-        trainRef.current = L.marker(here, { icon, zIndexOffset: 1000, riseOnHover: true })
+        trainRef.current = L.marker(here, { icon, zIndexOffset: 1200, riseOnHover: true })
           .addTo(map)
           .on("click", onTrainClick);
       } else {
@@ -320,15 +338,21 @@ export default function MetroMap({
           el.className = `train-pin ${trainVariant}`;
         }
       }
+
+      /* Cámara acompañando al tren. La primera vez acerca; después solo
+         desplaza, para no pelear con el gesto del usuario. */
+      if (followRef.current) {
+        if (map.getZoom() < 13.6) map.flyTo(here, 14.5, { duration: 0.9 });
+        else map.panTo(here, { animate: true, duration: 0.5, easeLinearity: 0.4 });
+      }
     };
 
     render(position.get());
-    /* El tren se mueve suscrito al MotionValue: sin renders de React por frame */
     const unsubscribe = position.on("change", render);
     return () => unsubscribe();
   }, [mapReady, routeStations, trainVisible, trainVariant, position, onTrainClick]);
 
-  /* -------------------------------------------------- ubicación del usuario */
+  /* ------------------------------------------- ubicación y ruta a pie */
   useEffect(() => {
     const L = leafletRef.current;
     const map = mapRef.current;
@@ -336,26 +360,30 @@ export default function MetroMap({
 
     userRef.current?.remove();
     userRef.current = null;
+    walkRef.current?.setLatLngs([]);
     if (!userLocation) return;
 
-    const icon = L.divIcon({
-      className: "",
-      html: `<span class="user-dot"></span>`,
-      iconSize: [20, 20],
-      iconAnchor: [10, 10],
-    });
-    userRef.current = L.marker([userLocation.latitude, userLocation.longitude], { icon })
+    const icon = L.divIcon({ className: "", html: `<span class="user-dot"></span>`, iconSize: [20, 20], iconAnchor: [10, 10] });
+    userRef.current = L.marker([userLocation.latitude, userLocation.longitude], { icon, zIndexOffset: 900 })
       .addTo(map)
-      .bindTooltip("Estás aquí");
-  }, [mapReady, userLocation]);
+      .bindTooltip("Estás aquí", { direction: "top", offset: [0, -12] });
 
-  /* ------------------------------------------------- reencuadre de la ruta */
+    const near = STATIONS.find((s) => s.id === nearestId);
+    if (near) {
+      walkRef.current?.setLatLngs([
+        [userLocation.latitude, userLocation.longitude],
+        [near.latitude, near.longitude],
+      ]);
+    }
+  }, [mapReady, userLocation, nearestId]);
+
+  /* ---------------------------------------------- reencuadre de la ruta */
   useEffect(() => {
     const map = mapRef.current;
     if (!map || fitSignal === 0 || routeStations.length === 0) return;
-    map.fitBounds(
+    map.flyToBounds(
       routeStations.map((s) => [s.latitude, s.longitude] as LatLng),
-      { padding: [90, 90], maxZoom: 13.5 },
+      { padding: [100, 100], maxZoom: 13.5, duration: 0.85 },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fitSignal]);
@@ -364,7 +392,7 @@ export default function MetroMap({
     <div className="relative h-full w-full">
       <div ref={containerRef} className="h-full w-full" />
       {tilesFailed ? (
-        <p className="pointer-events-none absolute inset-x-0 bottom-3 z-[500] mx-auto w-fit rounded-full bg-white/95 px-3.5 py-1.5 text-[11.5px] font-semibold text-tinta-suave shadow-suave">
+        <p className="pointer-events-none absolute inset-x-0 bottom-4 z-500 mx-auto w-fit rounded-full bg-white/95 px-3.5 py-1.5 text-[11.5px] font-semibold text-tinta-suave shadow-suave">
           Sin conexión al mapa base: el trazado y las estaciones siguen funcionando.
         </p>
       ) : null}

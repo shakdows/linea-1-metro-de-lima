@@ -65,6 +65,13 @@ export function answer(question: string, now = new Date()): string {
   return "Puedo ayudarte con rutas («de La Cultura a Gamarra»), horarios, tarifas y afluencia. ¿Qué necesitas?";
 }
 
+/** Si la pregunta menciona dos estaciones, devuelve la ruta para el mapa */
+export function routeFromQuestion(question: string) {
+  const found = findStations(question);
+  if (found.length < 2 || found[0].id === found[1].id) return null;
+  return { originId: found[0].id, destinationId: found[1].id };
+}
+
 export const SUGGESTIONS = [
   "¿Cuánto demoro de La Cultura a Gamarra?",
   "¿Cuándo sale el próximo tren?",

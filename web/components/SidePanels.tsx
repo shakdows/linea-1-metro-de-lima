@@ -16,7 +16,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { ALERTS, DIRECTIONS, LINE, type Station } from "@/data/stations";
 import { CROWD_COLORS, bestSlot, crowdingLevel, hhmm, nextTrains } from "@/lib/trip";
-import { SUGGESTIONS, answer } from "@/lib/assistant";
+import { SUGGESTIONS, answer, routeFromQuestion } from "@/lib/assistant";
 import { Card, CardHeader, DataTag } from "./Card";
 
 /* ------------------------------------------------------- próximos trenes */
@@ -252,7 +252,7 @@ export function ServiceAlerts() {
 }
 
 /* -------------------------------------------------------------- asistente */
-export function AIChat() {
+export function AIChat({ onShowRoute }: { onShowRoute?: (originId: string, destinationId: string) => void } = {}) {
   const [messages, setMessages] = useState<{ from: "bot" | "me"; text: string }[]>([
     {
       from: "bot",
@@ -261,6 +261,7 @@ export function AIChat() {
   ]);
   const [value, setValue] = useState("");
   const [typing, setTyping] = useState(false);
+  const [foundRoute, setFoundRoute] = useState<{ originId: string; destinationId: string } | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -272,6 +273,7 @@ export function AIChat() {
     setMessages((m) => [...m, { from: "me", text }]);
     setValue("");
     setTyping(true);
+    setFoundRoute(routeFromQuestion(text));
     setTimeout(() => {
       setTyping(false);
       setMessages((m) => [...m, { from: "bot", text: answer(text) }]);
@@ -319,6 +321,16 @@ export function AIChat() {
         </AnimatePresence>
         <div ref={endRef} />
       </div>
+
+      {foundRoute && onShowRoute ? (
+        <button
+          type="button"
+          onClick={() => onShowRoute(foundRoute.originId, foundRoute.destinationId)}
+          className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-verde py-2.5 text-[12.5px] font-bold text-white transition-colors hover:bg-verde-oscuro"
+        >
+          Mostrar en el mapa
+        </button>
+      ) : null}
 
       <div className="mt-3 flex flex-wrap gap-1.5">
         {SUGGESTIONS.map((s) => (

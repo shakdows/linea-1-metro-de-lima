@@ -21,7 +21,7 @@ export function MobileNav({
   return (
     <nav
       aria-label="Navegación móvil"
-      className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-4 border-t border-borde bg-white/97 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-60 grid grid-cols-4 border-t border-borde bg-white/97 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
     >
       {TABS.map(({ id, label, icon: Icon }) => {
         const isActive = id === active;

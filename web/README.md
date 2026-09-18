@@ -32,7 +32,11 @@ components/
   Hero.tsx            Cabecera compacta
   TripPlanner.tsx     Origen, destino, modo y cálculo de la ruta
   MetroMap.tsx        Mapa Leaflet: línea, estaciones, avenidas y tren
-  StationPopup.tsx    Ficha de estación con acciones de origen y destino
+  CommandCenter.tsx   Panel derecho: planificador, resumen y rutas frecuentes
+  StationDrawer.tsx   Ficha de estación a pantalla lateral, con fotografía
+  StationList.tsx     Las 26 estaciones con foto, buscables
+  TripHUD.tsx         Panel de cristal sobre el mapa durante el viaje
+  MobileSheet.tsx     Hoja inferior de tres alturas
   TripControls.tsx    Iniciar, pausar, continuar, finalizar, reiniciar, vuelta
   TripProgress.tsx    Estación actual, siguiente, progreso y tiempo restante
   RoutePanel.tsx      Detalle del tramo con las estaciones recorridas
@@ -63,6 +67,16 @@ Esto tiene dos consecuencias:
 - El tren circula a 60 fps **sin provocar un render de React por fotograma**.
 - El recorrido **no es una animación fija**: se deriva del tramo elegido, así
   que cambiar origen o destino cambia el trayecto, el sentido y la duración.
+
+## La aplicación cambia de estado, no de página
+
+El mapa ocupa el centro y nunca se abandona. Lo que cambia es el panel de la
+derecha, según la sección elegida en la barra lateral: planificador, estaciones,
+tarjeta, avisos, horarios o asistente. Al iniciar un viaje, el panel de cristal
+toma el mando sobre el mapa y el resto pasa a segundo plano.
+
+En móvil no se encoge esa disposición: el mapa ocupa la pantalla y el contenido
+vive en una hoja inferior arrastrable de tres alturas.
 
 ## Estados del viaje
 
