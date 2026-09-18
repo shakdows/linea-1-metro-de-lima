@@ -1,8 +1,8 @@
 # Arquitectura
 
-La aplicación que se publica vive en [`web/`](../web/). Una versión anterior,
-hecha con HTML y JavaScript sin build, sirvió de prototipo y ya no forma parte
-del repositorio.
+La aplicación que se publica vive en [`web/`](../web/). La primera versión del
+proyecto, hecha con HTML y JavaScript sin build, sirvió de prototipo y se
+conserva archivada en `web/public/clasico/`, publicada en `/clasico/`.
 
 ```
 web/
@@ -20,6 +20,7 @@ web/
 |---|---|
 | `/` | Portada. La única página con desplazamiento y secciones: presenta el proyecto, muestra los módulos y el trazado, y lleva a la aplicación |
 | `/app/` | La aplicación. No se comporta como una página |
+| `/clasico/` | La primera versión, archivada: se sirve tal cual desde `public/`, sin pasar por Next |
 
 La separación es deliberada: entrar directamente al espacio de trabajo dejaba
 al visitante sin contexto y hacía que la herramienta pareciera una web a medio
@@ -103,6 +104,17 @@ leen datos en Server Components.
 - **`vercel.json` no debe llevar `trailingSlash` ni `cleanUrls`**: duplicarían
   la barra final que ya añade `next.config.ts` y los `.css` y `.js` acabarían
   redirigidos a un 404.
+
+## La versión archivada
+
+`/clasico/` son archivos estáticos dentro de `public/`, así que Next no los
+procesa: se copian al `out/` tal cual. Conviene saber dos cosas:
+
+- **No registra service worker.** El original lo hacía con ámbito `/`, y como
+  era «caché primero» seguía sirviendo la portada antigua después de publicar
+  la nueva. Se retiró al archivar; `LimpiarServiceWorker` en la aplicación
+  actual da de baja cualquier registro que siga vivo en un navegador.
+- **Lleva `noindex`**, para que no compita en buscadores con la versión vigente.
 
 ## Si algún día hay datos reales
 

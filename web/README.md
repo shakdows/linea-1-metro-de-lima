@@ -6,6 +6,7 @@ Dos rutas, ambas exportadas como HTML estático:
 |---|---|---|
 | `/` | `app/page.tsx` | Portada: presenta el proyecto y lleva a la aplicación |
 | `/app/` | `app/app/page.tsx` | La aplicación: barra lateral fija, barra superior y un área central que cambia de módulo sin recargar |
+| `/clasico/` | `public/clasico/` | La primera versión del proyecto, servida tal cual desde `public/` |
 
 La portada es la única página con desplazamiento y secciones. Todo lo demás
 vive dentro de `/app/`, que no se comporta como una página.
@@ -57,6 +58,9 @@ components/
   MetroMap.tsx          Mapa Leaflet: línea, estaciones, avenidas y tren
   StationDrawer.tsx     Inspector de estación: cajón lateral derecho
   ui.tsx                Panel, PanelHeader, Pill, Button, Stat, Empty
+public/
+  estaciones/           Fotografías de 21 de las 26 estaciones (WebP)
+  clasico/              La primera versión del proyecto, archivada
 data/
   stations.ts           Las 26 estaciones, frecuencias, afluencia y avisos
   route.ts              Trazado, avenidas, interpolación, rumbo y distancias

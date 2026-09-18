@@ -12,6 +12,7 @@ vuelta, catálogo de estaciones, tarjeta, horarios, avisos y asistente.
 |---|---|
 | `/` | Portada: qué hace el proyecto, los módulos, el trazado animado y el botón de entrada |
 | `/app/` | La aplicación |
+| `/clasico/` | La primera versión del proyecto, conservada como archivo |
 
 La aplicación vive en [`web/`](web/): Next.js + TypeScript + Tailwind CSS +
 Framer Motion + Leaflet, exportada como sitio estático.
@@ -93,10 +94,31 @@ indica que debe construir `web/` y publicar `web/out`; no hace falta tocar el
 
 ```
 web/                    Portada y aplicación en Next.js (ver web/README.md)
+  public/clasico/       La primera versión, en HTML y JS sin build (archivo)
 vercel.json             Le dice a Vercel que construya web/
 docs/                   Datos, arquitectura, guía de activos y arquetipo de usuario
 fotos linea 1/          Fotografías originales de las estaciones
 ```
+
+## La versión archivada
+
+La primera versión del proyecto —HTML, CSS y JavaScript sin build, con sus tres
+páginas: portada, mapa y ficha de estación— se conserva íntegra en
+`web/public/clasico/` y se publica en `/clasico/`. Está enlazada desde el pie de
+la portada.
+
+Se le hicieron solo dos cambios al archivarla, ambos por seguridad y no por
+diseño:
+
+- **Se retiró el service worker.** Servía desde caché con ámbito `/` y era la
+  causa de que el despliegue siguiera mostrando la versión antigua después de
+  publicar la nueva. La aplicación actual da de baja cualquier registro que
+  quede, así que dejarlo habría hecho que ambos pelearan.
+- **Se añadió `noindex`** y una banda superior que avisa de que es un archivo y
+  enlaza a la versión actual, para que nadie llegue por buscador y crea que es
+  el proyecto vigente.
+
+Todo lo demás —maquetación, estilos, datos y comportamiento— está tal cual.
 
 ## Personalizar el aspecto
 

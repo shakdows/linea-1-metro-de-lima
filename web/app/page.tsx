@@ -4,13 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ArrowRight, Bell, Clock, CreditCard, LayoutGrid, Map, MousePointerClick,
+  ArrowRight, Bell, Clock, CreditCard, History, LayoutGrid, Map, MousePointerClick,
   Route, Sparkles, TrainFront,
 } from "lucide-react";
 import { LINE, STATIONS } from "@/data/stations";
 import { LineaDiagrama } from "@/components/landing/LineaDiagrama";
 
 const APP = "/app/";
+
+/* En GitHub Pages el sitio cuelga de /<repo>/, así que los archivos estáticos
+   (que no son rutas de Next) necesitan el prefijo a mano */
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const CLASICO = `${BASE}/clasico/index.html`;
 
 const CIFRAS = [
   { valor: STATIONS.length, etiqueta: "estaciones" },
@@ -335,12 +340,23 @@ function Pie() {
           </span>
         </div>
 
-        <p className="max-w-[58ch] text-[11.5px] leading-relaxed text-tinta-suave">
-          Interfaz conceptual para fines académicos. No representa el sitio oficial de
-          Línea 1 ni tiene relación con su operador. Los nombres, el orden y los
-          distritos de las estaciones son reales; las coordenadas son aproximadas y los
-          horarios, frecuencias, afluencia y saldos son estimaciones simuladas.
-        </p>
+        <div className="max-w-[58ch] space-y-3">
+          <p className="text-[11.5px] leading-relaxed text-tinta-suave">
+            Interfaz conceptual para fines académicos. No representa el sitio oficial de
+            Línea 1 ni tiene relación con su operador. Los nombres, el orden y los
+            distritos de las estaciones son reales; las coordenadas son aproximadas y los
+            horarios, frecuencias, afluencia y saldos son estimaciones simuladas.
+          </p>
+          <p className="text-[11.5px] text-tinta-suave">
+            <a
+              href={CLASICO}
+              className="inline-flex items-center gap-1.5 font-medium text-tinta underline decoration-borde underline-offset-4 transition-colors hover:decoration-verde"
+            >
+              <History size={12} /> Ver la primera versión del proyecto
+            </a>
+            <span className="ml-2 opacity-80">— HTML y JavaScript sin build, conservada como archivo.</span>
+          </p>
+        </div>
       </div>
     </footer>
   );
