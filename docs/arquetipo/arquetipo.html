@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+<head>
+<meta charset="utf-8">
+<title>Arquetipo de usuario — Línea 1 Metro de Lima</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Caveat:wght@600&display=swap">
+<style>
+:root{
+  --verde:#009b3a; --verde-oscuro:#006b2c; --verde-claro:#e8f7ed;
+  --fondo:#f7f9f8; --blanco:#fff; --texto:#101817; --texto-suave:#68736f;
+  --borde:#e4eae7; --amarillo:#f5b82e; --amarillo-fondo:#fef6e6;
+  --rojo:#e5484d; --rojo-fondo:#fdecec; --naranja:#f07c1f; --morado:#7c5cd6;
+}
+*{box-sizing:border-box}
+@page{ size:A4; margin:0 }
+body{
+  margin:0; font-family:'Plus Jakarta Sans',sans-serif; color:var(--texto);
+  background:var(--fondo); font-size:10pt; line-height:1.5; -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+.pagina{
+  /* Un pelo menos de 297 mm: si la sección midiera exactamente el alto de
+     la página, el salto generaría una página en blanco detrás de cada una. */
+  width:210mm; height:296.5mm; padding:14mm 15mm; background:var(--fondo);
+  position:relative; page-break-after:always; break-after:page; overflow:hidden;
+}
+.pagina:last-child{page-break-after:auto; break-after:auto}
+h1,h2,h3,h4{margin:0 0 6px; letter-spacing:-.02em; line-height:1.15}
+h1{font-size:26pt; font-weight:800}
+h2{font-size:13pt; font-weight:800}
+h3{font-size:10.5pt; font-weight:800}
+p{margin:0 0 8px}
+ul{margin:0; padding-left:15px}
+li{margin-bottom:4px}
+strong{font-weight:700}
+
+/* ---- Cabecera de página ---- */
+.cinta{
+  display:flex; align-items:center; gap:9px; font-size:7.5pt; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--texto-suave);
+  border-bottom:1px solid var(--borde); padding-bottom:9px; margin-bottom:16px;
+}
+.cinta__logo{
+  width:20px;height:20px;border-radius:6px;background:var(--verde);color:#fff;
+  display:grid;place-items:center;flex:none;
+}
+.cinta__pag{margin-left:auto;letter-spacing:.06em}
+
+/* ---- Portada del arquetipo ---- */
+.ficha{
+  background:linear-gradient(135deg,var(--verde-oscuro),#00461d 120%);
+  color:#fff; border-radius:18px; padding:22px; display:flex; gap:20px;
+  align-items:center; margin-bottom:16px; position:relative; overflow:hidden;
+}
+.ficha::after{
+  content:''; position:absolute; right:-60px; top:-70px; width:220px; height:220px;
+  border-radius:50%; background:rgba(255,255,255,.07);
+}
+.ficha > *{position:relative; z-index:2}
+.avatar{width:104px;height:104px;border-radius:50%;flex:none;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.ficha__nombre{font-size:21pt;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.ficha__rol{font-size:10pt;opacity:.85;margin:2px 0 10px}
+.ficha__tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{
+  font-size:7.5pt;font-weight:700;padding:4px 10px;border-radius:99px;
+  background:rgba(255,255,255,.16);white-space:nowrap;
+}
+.tag--claro{background:var(--verde-claro);color:var(--verde-oscuro)}
+
+.cita{
+  background:var(--blanco);border-left:4px solid var(--verde);border-radius:0 14px 14px 0;
+  padding:16px 20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,23,.05);
+}
+.cita p{font-size:13pt;font-weight:700;letter-spacing:-.02em;line-height:1.35;margin:0;font-style:italic}
+.cita span{font-size:8pt;color:var(--texto-suave);font-weight:600;display:block;margin-top:7px;font-style:normal}
+
+/* ---- Rejillas y tarjetas ---- */
+.rej{display:grid;gap:12px}
+.rej--2{grid-template-columns:1fr 1fr}
+.rej--3{grid-template-columns:repeat(3,1fr)}
+.rej--12{grid-template-columns:1.1fr .9fr}
+.card{
+  background:var(--blanco);border:1px solid var(--borde);border-radius:14px;padding:15px;
+  break-inside:avoid;
+}
+.card--verde{background:var(--verde-claro);border-color:#cbe9d8}
+.card--ambar{background:var(--amarillo-fondo);border-color:#f6e2b8}
+.card--rojo{background:var(--rojo-fondo);border-color:#f6c9ca}
+.card__tit{
+  display:flex;align-items:center;gap:8px;font-size:8pt;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--texto-suave);margin-bottom:10px;
+}
+.card__tit i{width:16px;height:16px;border-radius:5px;background:var(--verde);display:inline-block;flex:none}
+.card--ambar .card__tit i{background:var(--amarillo)}
+.card--rojo .card__tit i{background:var(--rojo)}
+.card--morado .card__tit i{background:var(--morado)}
+
+/* ---- Lista de datos ---- */
+.datos{display:grid;gap:7px;font-size:9pt}
+.datos > div{display:flex;gap:10px;align-items:baseline;border-bottom:1px dotted var(--borde);padding-bottom:6px}
+.datos > div:last-child{border:0;padding:0}
+.datos dt{color:var(--texto-suave);font-weight:600;flex:none;width:96px}
+.datos dd{margin:0;font-weight:700;flex:1}
+
+/* ---- Medidor ---- */
+.medidor{display:flex;align-items:center;gap:8px;margin-top:3px}
+.medidor__pista{flex:1;height:6px;border-radius:4px;background:var(--borde);overflow:hidden}
+.medidor__valor{display:block;height:100%;background:var(--verde);border-radius:4px}
+.medidor span{font-size:7.5pt;font-weight:700;color:var(--texto-suave);white-space:nowrap}
+
+/* ---- Rasgos con escala ---- */
+.rasgo{margin-bottom:9px;font-size:8.5pt}
+.rasgo__cab{display:flex;justify-content:space-between;font-weight:600;margin-bottom:3px}
+.rasgo__cab b{font-weight:700}
+.rasgo__cab em{font-style:normal;color:var(--texto-suave)}
+
+/* ---- Línea del día ---- */
+.dia{position:relative;padding-left:0}
+.dia__item{display:grid;grid-template-columns:52px 1fr;gap:12px;position:relative;padding-bottom:12px}
+.dia__item:last-child{padding-bottom:0}
+.dia__hora{font-weight:800;font-size:9.5pt;text-align:right;font-variant-numeric:tabular-nums;color:var(--verde-oscuro)}
+.dia__cuerpo{position:relative;padding-left:18px;font-size:8.8pt}
+.dia__cuerpo::before{
+  content:'';position:absolute;left:0;top:4px;width:9px;height:9px;border-radius:50%;
+  background:var(--blanco);border:2.5px solid var(--verde);z-index:2;
+}
+.dia__cuerpo::after{
+  content:'';position:absolute;left:4px;top:13px;bottom:-12px;width:2px;background:var(--borde);
+}
+.dia__item:last-child .dia__cuerpo::after{display:none}
+.dia__item--clave .dia__cuerpo::before{background:var(--verde);box-shadow:0 0 0 3px rgba(0,155,58,.18)}
+.dia__cuerpo b{display:block;font-size:9.2pt}
+.dia__cuerpo span{color:var(--texto-suave)}
+.uso{
+  display:inline-block;margin-top:4px;font-size:7.5pt;font-weight:800;
+  background:var(--verde-claro);color:var(--verde-oscuro);padding:3px 9px;border-radius:99px;
+}
+
+/* ---- Tabla de decisiones ---- */
+table{width:100%;border-collapse:collapse;font-size:8.6pt}
+th{
+  text-align:left;font-size:7.5pt;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--texto-suave);padding:0 10px 8px 0;border-bottom:1.5px solid var(--borde);
+}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--borde);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td:first-child{width:40%;color:var(--texto-suave)}
+td b{color:var(--texto)}
+.pill{
+  display:inline-block;font-size:7pt;font-weight:800;padding:2px 8px;border-radius:99px;
+  background:var(--verde-claro);color:var(--verde-oscuro);white-space:nowrap;margin-top:3px;
+}
+
+.nota{
+  font-size:7.8pt;color:var(--texto-suave);background:var(--blanco);
+  border:1px dashed var(--borde);border-radius:12px;padding:12px 14px;line-height:1.5;
+}
+.pie{
+  position:absolute;bottom:10mm;left:15mm;right:15mm;font-size:7pt;color:var(--texto-suave);
+  border-top:1px solid var(--borde);padding-top:7px;display:flex;justify-content:space-between;
+}
+.mini{font-size:8pt;color:var(--texto-suave)}
+.lista-check{list-style:none;padding:0;margin:0;font-size:8.6pt}
+.lista-check li{padding-left:18px;position:relative;margin-bottom:6px}
+.lista-check li::before{
+  content:'';position:absolute;left:0;top:5px;width:8px;height:8px;border-radius:2px;
+  background:var(--verde);
+}
+.lista-x li::before{background:var(--rojo);border-radius:50%}
+</style>
+</head>
+<body>
+
+<!-- ==================================================== PÁGINA 1 ======= -->
+<section class="pagina">
+  <div class="cinta">
+    <span class="cinta__logo">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="3" width="16" height="13" rx="4"/><path d="M4 11h16M8 20l-2 2M16 20l2 2"/></svg>
+    </span>
+    Línea 1 · Metro de Lima — Arquetipo de usuario primario
+    <span class="cinta__pag">01 / 04</span>
+  </div>
+
+  <div class="ficha">
+    <svg class="avatar" viewBox="0 0 200 200" role="img" aria-label="Avatar ilustrado de Milagros">
+      <defs>
+        <clipPath id="circulo"><circle cx="100" cy="100" r="100"/></clipPath>
+      </defs>
+      <g clip-path="url(#circulo)">
+        <rect width="200" height="200" fill="#e8f7ed"/>
+        <circle cx="100" cy="86" r="62" fill="#ffffff" opacity=".55"/>
+        <!-- hombros -->
+        <path d="M18 200c0-42 36-64 82-64s82 22 82 64z" fill="#009b3a"/>
+        <path d="M74 140h52v22a26 26 0 01-52 0z" fill="#c98b62"/>
+        <!-- cuello y rostro -->
+        <rect x="88" y="118" width="24" height="26" rx="12" fill="#c98b62"/>
+        <ellipse cx="100" cy="92" rx="38" ry="44" fill="#d9a179"/>
+        <!-- cabello -->
+        <path d="M100 38c26 0 42 18 42 44 0 10-2 18-4 24-2-16-6-26-12-30-10 8-30 10-46 4-6 4-10 14-12 26-3-7-5-15-5-24 0-26 11-44 37-44z" fill="#2b1d16"/>
+        <path d="M62 96c-8 2-12 12-10 26 3 20 12 34 20 40-8-20-12-44-10-66z" fill="#2b1d16"/>
+        <path d="M138 96c8 2 12 12 10 26-3 20-12 34-20 40 8-20 12-44 10-66z" fill="#2b1d16"/>
+        <!-- rasgos -->
+        <path d="M84 84q6-5 13 0M103 84q6-5 13 0" stroke="#2b1d16" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+        <circle cx="88" cy="94" r="4" fill="#2b1d16"/>
+        <circle cx="112" cy="94" r="4" fill="#2b1d16"/>
+        <path d="M92 116q8 7 16 0" stroke="#8a4f3a" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+        <!-- cordón / credencial -->
+        <path d="M84 148l16 26 16-26" stroke="#ffffff" stroke-width="4" fill="none" opacity=".85"/>
+        <rect x="90" y="172" width="20" height="14" rx="3" fill="#ffffff" opacity=".9"/>
+      </g>
+    </svg>
+
+    <div>
+      <div class="ficha__nombre">Milagros Quispe Ramos</div>
+      <p class="ficha__rol">29 años · Administradora de galería textil en Gamarra · Usuaria diaria de la Línea 1</p>
+      <div class="ficha__tags">
+        <span class="tag">San Juan de Lurigancho, Lima</span>
+        <span class="tag">2 viajes al día, 5 días a la semana</span>
+        <span class="tag tag--claro">Arquetipo primario</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cita">
+    <p>«No necesito que el tren llegue antes. Necesito saber cuándo llega, para no perder mi tiempo esperando.»</p>
+    <span>Cita representativa — resume su relación con el producto: no busca velocidad, busca certeza.</span>
+  </div>
+
+  <div class="rej rej--12" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card__tit"><i></i> A · Datos demográficos y de contexto</div>
+      <dl class="datos">
+        <div><dt>Nombre</dt><dd>Milagros Quispe Ramos</dd></div>
+        <div><dt>Edad y género</dt><dd>29 años · femenino</dd></div>
+        <div><dt>Ubicación</dt><dd>San Juan de Lurigancho, Lima, Perú<br><span class="mini">A 8 min a pie de la estación Los Postes</span></dd></div>
+        <div><dt>Ocupación</dt><dd>Administradora de una galería textil en el emporio de Gamarra</dd></div>
+        <div><dt>Educación</dt><dd>Superior técnica completa — Administración de Empresas (instituto)</dd></div>
+        <div><dt>Ingresos</dt><dd>S/ 1.800 – 2.200 mensuales<br><span class="mini">Aporta ~60 % del ingreso del hogar</span></dd></div>
+        <div><dt>Situación familiar</dt><dd>Conviviente · una hija de 6 años · comparte vivienda con su madre, que cuida a la niña</dd></div>
+      </dl>
+      <div style="margin-top:12px">
+        <div class="rasgo__cab" style="font-size:8pt"><b>Alfabetización digital</b><em>Media–alta</em></div>
+        <div class="medidor">
+          <div class="medidor__pista"><i class="medidor__valor" style="width:68%"></i></div>
+          <span>68 / 100</span>
+        </div>
+        <p class="mini" style="margin-top:6px">Nativa de <strong>smartphone</strong>, no de escritorio. Resuelve todo por el navegador del celular; instalar apps le cuesta (espacio y datos).</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__tit"><i></i> B · Perfil psicológico y comportamiento</div>
+
+      <h4 style="font-size:8pt;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-suave);margin:0 0 8px">Personalidad</h4>
+      <div class="rasgo"><div class="rasgo__cab"><b>Responsabilidad</b><em>Muy alta</em></div><div class="medidor"><div class="medidor__pista"><i class="medidor__valor" style="width:92%"></i></div></div></div>
+      <div class="rasgo"><div class="rasgo__cab"><b>Ansiedad ante los tiempos</b><em>Alta</em></div><div class="medidor"><div class="medidor__pista"><i class="medidor__valor" style="width:78%;background:var(--naranja)"></i></div></div></div>
+      <div class="rasgo"><div class="rasgo__cab"><b>Sociabilidad</b><em>Alta</em></div><div class="medidor"><div class="medidor__pista"><i class="medidor__valor" style="width:74%"></i></div></div></div>
+      <div class="rasgo"><div class="rasgo__cab"><b>Confianza institucional</b><em>Baja</em></div><div class="medidor"><div class="medidor__pista"><i class="medidor__valor" style="width:24%;background:var(--rojo)"></i></div></div></div>
+      <div class="rasgo" style="margin-bottom:12px"><div class="rasgo__cab"><b>Apertura a nueva tecnología</b><em>Media</em></div><div class="medidor"><div class="medidor__pista"><i class="medidor__valor" style="width:52%"></i></div></div></div>
+
+      <h4 style="font-size:8pt;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-suave);margin:0 0 6px">Valores y motivaciones</h4>
+      <ul style="font-size:8.6pt;margin-bottom:10px">
+        <li><strong>El tiempo con su hija</strong> por encima de todo: cada minuto ahorrado en el viaje es un minuto en casa.</li>
+        <li><strong>Independencia económica.</strong> Quiere abrir su propia tienda.</li>
+        <li><strong>Puntualidad como reputación.</strong> Llegar tarde la hace sentir poco profesional.</li>
+        <li><strong>Ahorro.</strong> Compara costos; el metro es su opción por precio y previsibilidad.</li>
+      </ul>
+
+      <h4 style="font-size:8pt;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-suave);margin:0 0 6px">Hábitos tecnológicos</h4>
+      <p style="font-size:8.6pt;margin-bottom:8px">Android de gama media (≈ S/ 700) · plan de <strong>6 GB</strong> de datos · wifi solo en casa · 5–6 h de pantalla al día, casi todo en vertical y con una mano.<br>
+      <span class="mini">Apps favoritas: WhatsApp, Facebook, TikTok, Yape, Google Maps.</span></p>
+
+      <h4 style="font-size:8pt;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-suave);margin:0 0 6px">Fuentes de información</h4>
+      <p style="font-size:8.6pt;margin:0">Grupos de WhatsApp del trabajo y del barrio · grupos de Facebook de SJL · TikTok · <strong>boca a boca en la cola del andén</strong> · paneles y anuncios de la estación. Casi nunca entra a webs institucionales por iniciativa propia.</p>
+    </div>
+  </div>
+
+  <div class="pie">
+    <span>Arquetipo de usuario · Proyecto académico Línea 1 — Metro de Lima</span>
+    <span>Hipótesis de diseño, pendiente de validación con entrevistas</span>
+  </div>
+</section>
+
+<!-- ==================================================== PÁGINA 2 ======= -->
+<section class="pagina">
+  <div class="cinta">
+    <span class="cinta__logo">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="3" width="16" height="13" rx="4"/><path d="M4 11h16"/></svg>
+    </span>
+    Objetivos, necesidades y dolores
+    <span class="cinta__pag">02 / 04</span>
+  </div>
+
+  <h2 style="margin-bottom:12px">C · Objetivos y necesidades</h2>
+
+  <div class="rej rej--2" style="margin-bottom:12px">
+    <div class="card card--verde">
+      <div class="card__tit"><i></i> Objetivos a corto plazo</div>
+      <ul style="font-size:8.8pt">
+        <li>Llegar a la galería <strong>antes de las 8:30</strong> sin tener que correr.</li>
+        <li>Decidir cada mañana si sale <strong>08:00 u 08:15</strong>, según cómo esté el servicio.</li>
+        <li>No quedarse sin saldo justo delante del torniquete.</li>
+        <li>Salir del trabajo y llegar a casa a tiempo para la cena y las tareas de su hija.</li>
+      </ul>
+    </div>
+    <div class="card card--verde">
+      <div class="card__tit"><i></i> Objetivos a largo plazo</div>
+      <ul style="font-size:8.8pt">
+        <li>Abrir <strong>su propia tienda</strong> en el emporio en 3–4 años.</li>
+        <li>Recuperar <strong>una hora diaria</strong> de vida hoy perdida en traslados e incertidumbre.</li>
+        <li>Mudarse a un distrito más cercano al trabajo, o que su hija estudie cerca del metro.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rej rej--3" style="margin-bottom:18px">
+    <div class="card">
+      <div class="card__tit"><i></i> Necesidades funcionales</div>
+      <p class="mini" style="margin-bottom:8px">Lo que el producto debe <strong>hacer</strong>.</p>
+      <ul style="font-size:8.5pt">
+        <li>Decir <strong>cuánto dura</strong> su viaje de puerta a puerta.</li>
+        <li><strong>Cuándo pasa el próximo tren</strong> en su estación y sentido.</li>
+        <li>Avisarle de <strong>demoras antes de salir de casa</strong>, no en el andén.</li>
+        <li>Qué <strong>salida</strong> usar al bajar.</li>
+        <li>A qué hora la estación estará <strong>menos llena</strong>.</li>
+        <li>Cuánto <strong>saldo</strong> le queda y para cuántos viajes alcanza.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card__tit"><i></i> Necesidades emocionales</div>
+      <p class="mini" style="margin-bottom:8px">Cómo quiere <strong>sentirse</strong>.</p>
+      <ul style="font-size:8.5pt">
+        <li><strong>En control</strong>, no adivinando.</li>
+        <li><strong>Tranquila</strong> desde que sale de casa: sin la ansiedad de «¿llegaré?».</li>
+        <li><strong>Respetada</strong>: que la información le hable claro y no la trate como si no entendiera.</li>
+        <li><strong>Segura</strong> de que lo que lee está vigente hoy, no el mes pasado.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card__tit"><i></i> Necesidades sociales</div>
+      <p class="mini" style="margin-bottom:8px">Cómo quiere ser <strong>percibida</strong>.</p>
+      <ul style="font-size:8.5pt">
+        <li>Como la persona <strong>puntual y confiable</strong> del equipo.</li>
+        <li>Como <strong>la que sabe</strong>: la que avisa por WhatsApp «hoy hay demoras, salgan antes».</li>
+        <li>Como una madre que <strong>organiza bien</strong> su día y llega a tiempo a casa.</li>
+        <li>Nunca como alguien que «no sabe usar» una app.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 style="margin-bottom:12px">D · Dolores y barreras <span style="font-weight:600;color:var(--texto-suave);font-size:10pt">(pain points)</span></h2>
+
+  <div class="rej rej--3">
+    <div class="card card--rojo">
+      <div class="card__tit"><i></i> Frustraciones actuales</div>
+      <ul style="font-size:8.5pt">
+        <li>La información oficial está <strong>dispersa</strong>: horarios en PDF, avisos en Facebook, tarifas en otra página.</li>
+        <li>Se entera de las demoras <strong>cuando ya está en el andén</strong> y no puede cambiar de plan.</li>
+        <li>Nadie le dice <strong>cuántos minutos</strong> falta para el próximo tren.</li>
+        <li>Los horarios por estación son tablas pensadas para papel, ilegibles en el celular.</li>
+        <li>Viajar apretada en hora punta, y peor cuando lleva a su hija.</li>
+        <li>Miedo a que le roben el celular justo cuando lo saca para consultar algo.</li>
+      </ul>
+    </div>
+    <div class="card card--ambar">
+      <div class="card__tit"><i></i> Obstáculos para adoptar la solución</div>
+      <ul style="font-size:8.5pt">
+        <li><strong>Datos móviles limitados:</strong> no va a gastar megas en una web pesada.</li>
+        <li><strong>Celular con poco espacio:</strong> no instala una app que usaría 40 segundos al día.</li>
+        <li><strong>Desconfía de dar permisos</strong> de ubicación a sitios que no conoce.</li>
+        <li>Consulta <strong>en movimiento</strong>, caminando, con una mano y bajo el sol: si hay que buscar dentro de menús, abandona.</li>
+        <li>No creará una cuenta ni dejará su correo para ver un horario.</li>
+      </ul>
+    </div>
+    <div class="card card--rojo">
+      <div class="card__tit"><i></i> Creencias limitantes</div>
+      <ul style="font-size:8.5pt">
+        <li>«Esas páginas <strong>nunca están actualizadas</strong>, mejor pregunto en la cola.»</li>
+        <li>«Igual el tren va a llegar lleno; <strong>no hay nada que yo pueda hacer</strong>.»</li>
+        <li>«La tecnología no va a arreglar el transporte de Lima.»</li>
+        <li>«Si dice “tiempo real” seguro es mentira.»</li>
+      </ul>
+      <p class="mini" style="margin-top:10px;margin-bottom:0"><strong>Implicación:</strong> el producto no solo debe ser útil, debe <strong>demostrar</strong> que su información es fiable. Ganar credibilidad es parte del diseño, no del marketing.</p>
+    </div>
+  </div>
+
+  <div class="pie">
+    <span>Arquetipo de usuario · Proyecto académico Línea 1 — Metro de Lima</span>
+    <span>02 / 04</span>
+  </div>
+</section>
+
+<!-- ==================================================== PÁGINA 3 ======= -->
+<section class="pagina">
+  <div class="cinta">
+    <span class="cinta__logo">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    </span>
+    Escenario de uso
+    <span class="cinta__pag">03 / 04</span>
+  </div>
+
+  <h2 style="margin-bottom:4px">E · Un día típico en la vida de Milagros</h2>
+  <p class="mini" style="margin-bottom:14px">Los puntos rellenos marcan los momentos en que <strong>abriría el producto</strong>.</p>
+
+  <div class="rej rej--12">
+    <div class="card">
+      <div class="dia">
+        <div class="dia__item"><div class="dia__hora">5:40</div><div class="dia__cuerpo"><b>Se levanta</b><span>Prepara el desayuno y el uniforme de su hija. La radio de fondo.</span></div></div>
+
+        <div class="dia__item dia__item--clave"><div class="dia__hora">6:30</div><div class="dia__cuerpo"><b>Decide a qué hora salir</b><span>Con wifi en casa, celular en una mano y la taza en la otra. Quiere saber si hoy el servicio está normal y cuánto va a tardar.</span><span class="uso">Momento de uso 1 · 25 seg</span></div></div>
+
+        <div class="dia__item dia__item--clave"><div class="dia__hora">6:47</div><div class="dia__cuerpo"><b>Camina a la estación Los Postes</b><span>8 minutos a pie. Mira el celular dos veces: ¿alcanzo el tren de las 6:55 o voy tranquila?</span><span class="uso">Momento de uso 2 · 15 seg, en movimiento</span></div></div>
+
+        <div class="dia__item"><div class="dia__hora">7:00</div><div class="dia__cuerpo"><b>Viaje a Gamarra</b><span>Hora punta. De pie, sujeta con una mano, el bolso delante. No saca el celular por seguridad.</span></div></div>
+
+        <div class="dia__item"><div class="dia__hora">8:00</div><div class="dia__cuerpo"><b>Abre la galería</b><span>Atiende, factura, coordina con proveedores. Jornada de pie.</span></div></div>
+
+        <div class="dia__item"><div class="dia__hora">13:30</div><div class="dia__cuerpo"><b>Almuerzo</b><span>Videollamada corta con su hija. Revisa WhatsApp y Facebook.</span></div></div>
+
+        <div class="dia__item dia__item--clave"><div class="dia__hora">18:50</div><div class="dia__cuerpo"><b>Antes de cerrar</b><span>Decide si sale ya o espera 20 minutos a que baje la afluencia. A veces consulta desde la PC del mostrador.</span><span class="uso">Momento de uso 3 · 40 seg</span></div></div>
+
+        <div class="dia__item"><div class="dia__hora">20:15</div><div class="dia__cuerpo"><b>Llega a casa</b><span>Cena, tareas con su hija, plancha el uniforme del día siguiente.</span></div></div>
+
+        <div class="dia__item"><div class="dia__hora">22:30</div><div class="dia__cuerpo"><b>Duerme</b><span>Última mirada al celular: TikTok cinco minutos.</span></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card card--verde" style="margin-bottom:12px">
+        <div class="card__tit"><i></i> Contexto de uso</div>
+        <dl class="datos">
+          <div><dt>Dispositivo principal</dt><dd>Smartphone Android de gama media, en vertical, <strong>con una sola mano</strong></dd></div>
+          <div><dt>Dispositivo secundario</dt><dd>PC del mostrador de la galería (navegador, pantalla pequeña, uso ocasional)</dd></div>
+          <div><dt>Entorno</dt><dd>De pie, caminando, con ruido, a veces bajo el sol</dd></div>
+          <div><dt>Conexión</dt><dd>Wifi en casa · datos móviles limitados en la calle</dd></div>
+          <div><dt>Frecuencia</dt><dd><strong>2–3 sesiones por día laborable</strong><br><span class="mini">10 a 14 sesiones por semana</span></dd></div>
+          <div><dt>Duración</dt><dd>15 a 40 segundos por sesión</dd></div>
+        </dl>
+      </div>
+
+      <div class="card">
+        <div class="card__tit"><i></i> La prueba de los 30 segundos</div>
+        <p style="font-size:8.6pt;margin-bottom:8px">Milagros nunca «navega» el producto: lo <strong>consulta</strong>. Si en media pantalla y un toque no obtiene su respuesta, vuelve a preguntar en el andén.</p>
+        <p style="font-size:8.6pt;margin:0"><strong>Criterio de éxito de diseño:</strong> desde que abre el sitio hasta que sabe a qué hora salir deben pasar <strong>menos de 30 segundos</strong> y como máximo <strong>un toque</strong>.</p>
+      </div>
+
+      <div class="card card--ambar" style="margin-top:12px">
+        <div class="card__tit"><i></i> Lo que la haría abandonar
+        </div>
+        <ul style="font-size:8.4pt;margin:0">
+          <li>Un registro o un correo obligatorio.</li>
+          <li>Un permiso de ubicación pedido nada más entrar.</li>
+          <li>Una portada con noticias institucionales antes de la información útil.</li>
+          <li>Tres toques para saber cuándo pasa el tren.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="pie">
+    <span>Arquetipo de usuario · Proyecto académico Línea 1 — Metro de Lima</span>
+    <span>03 / 04</span>
+  </div>
+</section>
+
+<!-- ==================================================== PÁGINA 4 ======= -->
+<section class="pagina">
+  <div class="cinta">
+    <span class="cinta__logo">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>
+    </span>
+    Cómo este arquetipo influye en decisiones de diseño
+    <span class="cinta__pag">04 / 04</span>
+  </div>
+
+  <h2 style="margin-bottom:4px">Del arquetipo a la interfaz</h2>
+  <p class="mini" style="margin-bottom:12px">Cada decisión de la izquierda nace de un rasgo concreto de Milagros. Todas están <strong>ya implementadas</strong> en el prototipo.</p>
+
+  <div class="card" style="padding:15px 15px 6px;margin-bottom:12px">
+    <table>
+      <thead><tr><th>Rasgo del arquetipo</th><th>Decisión de diseño</th></tr></thead>
+      <tbody>
+        <tr><td>Sesiones de 15–40 s: consulta, no navega</td><td><b>El planificador es el héroe.</b> Tarjeta flotante sobre el hero, con origen y destino ya rellenados. La respuesta llega en un toque.<span class="pill">TripPlanner</span></td></tr>
+        <tr><td>Una mano, en movimiento, pantalla pequeña</td><td><b>Barra inferior fija de cuatro destinos</b> y objetivos táctiles grandes. El mapa de 26 estaciones se desplaza lateralmente con el pulgar.<span class="pill">Mobile first</span></td></tr>
+        <tr><td>Datos limitados · no instala apps</td><td><b>Sitio estático sin build</b>, unos pocos KB, y <b>PWA instalable desde el navegador</b> con service worker: la segunda visita carga sin consumir datos.<span class="pill">sw.js</span></td></tr>
+        <tr><td>Decide a qué hora salir, no solo cómo llegar</td><td><b>Gráfico de afluencia por franja horaria</b> con nivel y porcentaje al tocar cada barra, y una recomendación explícita de mejor franja.<span class="pill">CrowdingChart</span></td></tr>
+        <tr><td>Se entera de las demoras demasiado tarde</td><td><b>Estado del servicio permanente en la barra superior</b> y banda de incidencia automática con el tramo afectado y los minutos extra.<span class="pill">ServiceStatus</span></td></tr>
+        <tr><td>«Esas páginas nunca están actualizadas»</td><td><b>Etiqueta de procedencia en cada dato</b> — 🟢 tiempo real, 🟣 estimación, ⚪ demostración — más la franja que declara que es un concepto académico. La honestidad es la función que construye confianza.<span class="pill">UI.etiquetaDato()</span></td></tr>
+        <tr><td>Desconfía de los permisos</td><td><b>La geolocalización nunca se pide al cargar.</b> Es un botón explícito y el sitio funciona entero sin concederla.<span class="pill">NearbyStations</span></td></tr>
+        <tr><td>No sabe por qué salida salir en Gamarra</td><td><b>«Al bajar, usa la salida hacia Av. Aviación»</b> dentro del resultado del viaje, y salidas numeradas en la ficha de estación.<span class="pill">TripResult</span></td></tr>
+        <tr><td>Miedo a quedarse sin saldo en el torniquete</td><td><b>El saldo se traduce a viajes:</b> «con tu saldo puedes hacer aproximadamente 12 viajes». El número que ella necesita, no el que devuelve el sistema.<span class="pill">MetroCard</span></td></tr>
+        <tr><td>Pregunta a la gente, no busca en menús</td><td><b>Asistente en lenguaje natural</b>: «quiero llegar a Gamarra antes de las 9:30». Replica la conversación del andén, que es su canal natural.<span class="pill">AIChat</span></td></tr>
+        <tr><td>Consulta bajo el sol, caminando</td><td><b>Contraste alto, cifras en peso 800</b> y jerarquía en la que el número de minutos es el elemento más grande de cada tarjeta.<span class="pill">Sistema visual</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rej rej--2" style="margin-bottom:12px">
+    <div class="card card--rojo">
+      <div class="card__tit"><i></i> Qué decidimos NO construir por este arquetipo</div>
+      <ul class="lista-check lista-x">
+        <li><strong>Registro o inicio de sesión.</strong> Milagros abandona antes de escribir un correo.</li>
+        <li><strong>Notificaciones push al entrar.</strong> Rompen su confianza en la primera visita.</li>
+        <li><strong>Carrusel de noticias institucionales en la portada.</strong> Ocupa el espacio de lo que ella vino a buscar.</li>
+        <li><strong>Tutorial de bienvenida.</strong> Sus sesiones duran menos que el tutorial.</li>
+        <li><strong>App nativa como primer paso.</strong> No la instalaría; la PWA cubre el caso sin pedirle nada.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card__tit"><i></i> Cómo validar este arquetipo</div>
+      <p class="mini" style="margin-bottom:8px">Es una <strong>hipótesis de diseño</strong> construida a partir del contexto del proyecto, no el resultado de un estudio de campo. Para convertirlo en un arquetipo validado bastan <strong>5 a 8 entrevistas</strong> de 20 minutos en andén, en hora punta y en hora valle.</p>
+      <ul class="lista-check">
+        <li>«Cuéntame el último día que llegaste tarde por el metro. ¿Qué pasó?»</li>
+        <li>«¿Cómo decides a qué hora salir de tu casa?»</li>
+        <li>«¿Dónde te enteras de que hay demoras?»</li>
+        <li>«Muéstrame en tu celular qué haces cuando quieres saber un horario.»</li>
+        <li>«¿Qué te haría dejar de usar una página como esta?»</li>
+      </ul>
+      <p class="mini" style="margin:8px 0 0"><strong>Señal de que el arquetipo falla:</strong> si tres de cada cinco entrevistados ya saben de memoria la frecuencia de su estación, el valor del producto se desplaza de «cuándo pasa el tren» a «qué tan lleno va».</p>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>Nota metodológica.</strong> Milagros Quispe Ramos es un personaje ficticio. Su perfil sintetiza el patrón de viaje más frecuente de la Línea 1 — residente del cono norte o sur que se desplaza a diario a un centro de trabajo del eje central — pero los datos concretos de ingresos, horarios y hábitos son supuestos razonados, no mediciones. Úsese como herramienta de alineación del equipo y de argumentación de decisiones de diseño, nunca como evidencia de comportamiento real.
+  </div>
+
+  <div class="pie">
+    <span>Arquetipo de usuario · Proyecto académico Línea 1 — Metro de Lima</span>
+    <span>04 / 04</span>
+  </div>
+</section>
+
+</body>
+</html>
