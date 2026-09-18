@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Línea 1 — Muévete por Lima</title>
+<meta name="description" content="Planifica tu viaje en la Línea 1 del Metro de Lima: mapa interactivo de las 26 estaciones, próximos trenes, afluencia por hora y estado del servicio.">
+<meta name="theme-color" content="#7AB51D">
+<meta property="og:title" content="Línea 1 — Muévete por Lima">
+<meta property="og:description" content="Planificador de viajes, mapa interactivo y estado del servicio de la Línea 1 del Metro de Lima.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/img/og-cover.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="banner-demo">
+  Proyecto demostrativo, no oficial. Los tiempos y la afluencia son estimaciones simuladas.
+</div>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="marca" href="index.html">
+      <span class="marca__punto">1</span> LÍNEA 1
+    </a>
+    <nav class="nav__links" aria-label="Principal">
+      <a href="index.html" aria-current="page">Inicio</a>
+      <a href="mapa.html">Mapa</a>
+      <a href="estacion.html">Estaciones</a>
+      <a href="#tarjeta">Tarjeta</a>
+      <a href="#avisos">Avisos</a>
+    </nav>
+    <div class="nav__acciones">
+      <a class="btn btn--fantasma btn--sm solo-escritorio" href="#asistente">✦ Asistente</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================ HERO + PLANIFICADOR ============================ -->
+  <section class="hero">
+    <div class="contenedor hero__inner">
+      <div>
+        <span class="hero__etiqueta">Metro de Lima</span>
+        <h1>Muévete por Lima<br><em>rápido, fácil y seguro</em></h1>
+        <p class="hero__sub">
+          26 estaciones entre Villa El Salvador y Bayóvar. Consulta tu ruta,
+          el próximo tren y qué tan llena estará la estación antes de salir.
+        </p>
+        <div id="estado-servicio" class="estado" role="status" aria-live="polite">
+          <span class="estado__pulso"></span>
+          <span class="estado__texto">Cargando estado del servicio…</span>
+        </div>
+      </div>
+
+      <div class="planificador" id="planificador">
+        <div class="campo">
+          <label for="origen">📍 ¿Desde dónde viajas?</label>
+          <select id="origen" autocomplete="off"></select>
+        </div>
+
+        <div class="planificador__intercambio">
+          <button type="button" class="intercambiar" id="intercambiar" aria-label="Intercambiar origen y destino" title="Intercambiar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="campo">
+          <label for="destino">🏁 ¿A dónde vas?</label>
+          <select id="destino" autocomplete="off"></select>
+        </div>
+
+        <button type="button" class="btn btn--primario btn--bloque" id="calcular">
+          Calcular viaje
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+
+        <div class="metricas">
+          <div class="metrica">
+            <span class="metrica__icono">🚆</span>
+            <span class="metrica__valor" id="m-proximo">—</span>
+            <span class="metrica__etiqueta">Próximo tren</span>
+          </div>
+          <div class="metrica">
+            <span class="metrica__icono">⏱</span>
+            <span class="metrica__valor" id="m-duracion">—</span>
+            <span class="metrica__etiqueta">Tiempo viaje</span>
+          </div>
+          <div class="metrica">
+            <span class="metrica__icono">👥</span>
+            <span class="metrica__valor" id="m-afluencia">—</span>
+            <span class="metrica__etiqueta">Afluencia</span>
+          </div>
+        </div>
+
+        <div class="resultado" id="resultado" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ MAPA INTERACTIVO ============================ -->
+  <section class="seccion" id="mapa">
+    <div class="contenedor">
+      <div class="seccion__cabecera">
+        <h2>Mapa interactivo</h2>
+        <p>Toca cualquiera de las 26 estaciones para ver sus próximos trenes, su afluencia y sus salidas.</p>
+      </div>
+      <div class="mapa-linea">
+        <div class="linea" id="linea" role="list" aria-label="Estaciones de la Línea 1"></div>
+      </div>
+      <p style="margin-top:14px">
+        <a class="btn btn--fantasma btn--sm" href="mapa.html">Ver mapa geográfico →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================ PRÓXIMOS TRENES ============================ -->
+  <section class="seccion" id="trenes" style="padding-top:0">
+    <div class="contenedor">
+      <div class="seccion__cabecera">
+        <h2>Próximos trenes</h2>
+        <p>Desde <strong id="trenes-estacion">tu estación</strong>, en ambos sentidos. Se actualiza cada 15 segundos.</p>
+      </div>
+      <div class="rejilla rejilla--2" id="trenes-lista"></div>
+    </div>
+  </section>
+
+  <!-- ============================ AFLUENCIA ============================ -->
+  <section class="seccion" id="afluencia" style="padding-top:0">
+    <div class="contenedor">
+      <div class="seccion__cabecera">
+        <h2>¿A qué hora conviene viajar?</h2>
+        <p>Estimación basada en el patrón habitual de la línea. No es un dato en tiempo real.</p>
+      </div>
+      <div class="tarjeta">
+        <div class="afluencia-grafico" id="grafico-afluencia" role="img" aria-label="Afluencia estimada por hora"></div>
+        <div class="leyenda">
+          <span><i style="background:#a8dc63"></i> Baja</span>
+          <span><i style="background:#7ab51d"></i> Media</span>
+          <span><i style="background:#f57c1f"></i> Alta</span>
+          <span><i style="background:#e5484d"></i> Muy alta</span>
+        </div>
+        <div class="destacado" id="mejor-franja">⭐ Calculando la mejor franja para viajar…</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ TARJETA + AVISOS ============================ -->
+  <section class="seccion" style="padding-top:0">
+    <div class="contenedor">
+      <div class="rejilla rejilla--2">
+
+        <div id="tarjeta">
+          <div class="seccion__cabecera"><h2>Mi tarjeta</h2></div>
+          <div class="tarjeta-pasajero">
+            <div>
+              <span class="tarjeta-pasajero__etiqueta">Saldo disponible</span>
+              <div class="tarjeta-pasajero__saldo" id="saldo">S/ 18.50</div>
+            </div>
+            <div class="tarjeta-pasajero__pie">
+              <span class="tarjeta-pasajero__meta">
+                Tarjeta •••• 4821<br>
+                <span id="saldo-actualizado">Actualizado hoy</span>
+              </span>
+              <button class="btn btn--fantasma btn--sm" id="consultar-saldo">Consultar saldo</button>
+            </div>
+          </div>
+          <p style="font-size:.82rem;color:var(--texto-suave);margin-top:10px">
+            Demostración de interfaz. La consulta real requiere conectar la API oficial de la tarjeta.
+          </p>
+        </div>
+
+        <div id="avisos">
+          <div class="seccion__cabecera"><h2>Avisos del servicio</h2></div>
+          <div class="rejilla" id="avisos-lista"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ ASISTENTE ============================ -->
+  <section class="seccion" id="asistente" style="padding-top:0">
+    <div class="contenedor">
+      <div class="seccion__cabecera">
+        <h2>✦ Asistente Línea 1</h2>
+        <p>Pregunta en lenguaje natural. Responde con los datos cargados en esta web, sin salir de la página.</p>
+      </div>
+      <div class="asistente">
+        <div class="asistente__hilo" id="hilo" aria-live="polite"></div>
+        <div class="asistente__sugerencias" id="sugerencias"></div>
+        <form class="asistente__forma" id="forma-asistente">
+          <label class="visualmente-oculto" for="pregunta">Escribe tu pregunta</label>
+          <input id="pregunta" placeholder="¿Cuánto demoro de La Cultura a Gamarra?" autocomplete="off">
+          <button class="btn btn--primario btn--sm" type="submit" aria-label="Enviar">→</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ INFORMACIÓN AL PASAJERO ============================ -->
+  <section class="seccion" id="info" style="padding-top:0">
+    <div class="contenedor">
+      <div class="seccion__cabecera"><h2>Información al pasajero</h2></div>
+      <div class="info-rejilla">
+        <div class="info-item"><strong>26</strong><span>Estaciones</span></div>
+        <div class="info-item"><strong id="info-horario">05:30 – 22:30</strong><span>Horario de servicio</span></div>
+        <div class="info-item"><strong id="info-tarifa">S/ 1.50</strong><span>Tarifa por viaje</span></div>
+        <div class="info-item"><strong id="info-extremos">~54 min</strong><span>VES → Bayóvar</span></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie__rejilla">
+      <div>
+        <div class="marca" style="color:#fff;margin-bottom:10px"><span class="marca__punto">1</span> LÍNEA 1</div>
+        <p style="font-size:.88rem;max-width:34ch;margin:0">
+          Concepto de interfaz para el Metro de Lima. Código abierto, sin fines comerciales.
+        </p>
+      </div>
+      <div>
+        <h4>Viajar</h4>
+        <ul>
+          <li><a href="#planificador">Planificar viaje</a></li>
+          <li><a href="mapa.html">Mapa de la línea</a></li>
+          <li><a href="estacion.html">Estaciones</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Servicio</h4>
+        <ul>
+          <li><a href="#avisos">Avisos</a></li>
+          <li><a href="#afluencia">Afluencia</a></li>
+          <li><a href="#info">Horarios y tarifas</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Proyecto</h4>
+        <ul>
+          <li><a href="https://github.com/shakdows/linea-1-metro-de-lima">Repositorio</a></li>
+          <li><a href="docs/DATOS.md">Fuentes de datos</a></li>
+          <li><a href="docs/ACTIVOS-Y-DISENO.md">Guía de diseño</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie__legal">
+      Proyecto independiente, sin relación con el operador oficial de la Línea 1.
+      Datos de demostración: no los uses para tomar un tren.
+    </div>
+  </div>
+</footer>
+
+<nav class="tabbar" aria-label="Navegación móvil">
+  <a href="index.html" aria-current="page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-7 9 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+    Inicio
+  </a>
+  <a href="mapa.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3L3 6v15l6-3 6 3 6-3V3l-6 3z"/><path d="M9 3v15M15 6v15"/></svg>
+    Mapa
+  </a>
+  <a href="#tarjeta">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+    Tarjeta
+  </a>
+  <a href="#asistente">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    Asistente
+  </a>
+</nav>
+
+<div class="popover" id="popover" hidden role="dialog" aria-label="Detalle de estación"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/planner.js"></script>
+<script src="assets/js/assistant.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

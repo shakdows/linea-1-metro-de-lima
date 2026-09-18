@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mapa de la Línea 1 — Metro de Lima</title>
+<meta name="description" content="Mapa esquemático y geográfico de las 26 estaciones de la Línea 1 del Metro de Lima.">
+<meta name="theme-color" content="#7AB51D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="banner-demo">
+  Las coordenadas del mapa geográfico son aproximadas y sirven solo de referencia.
+</div>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="marca" href="index.html"><span class="marca__punto">1</span> LÍNEA 1</a>
+    <nav class="nav__links" aria-label="Principal">
+      <a href="index.html">Inicio</a>
+      <a href="mapa.html" aria-current="page">Mapa</a>
+      <a href="estacion.html">Estaciones</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="seccion__cabecera">
+        <h1>Mapa de la Línea 1</h1>
+        <p>26 estaciones entre Villa El Salvador y Bayóvar. Toca una estación para abrir su ficha.</p>
+      </div>
+
+      <div id="estado-servicio" class="estado" style="max-width:520px;margin-bottom:22px">
+        <span class="estado__pulso"></span><span class="estado__texto">Cargando…</span>
+      </div>
+
+      <div class="mapa-linea"><div class="linea" id="linea" role="list"></div></div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:0">
+    <div class="contenedor">
+      <div class="seccion__cabecera">
+        <h2>Vista geográfica</h2>
+        <p>Trazado aproximado sobre el plano de Lima. Requiere conexión a internet.</p>
+      </div>
+      <div id="mapa-geo"><div class="mapa-fallback">Cargando el mapa…</div></div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:0">
+    <div class="contenedor">
+      <div class="seccion__cabecera"><h2>Todas las estaciones</h2></div>
+      <div class="rejilla rejilla--3" id="listado"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie__legal" style="border:0;margin:0;padding:0">
+      Proyecto independiente, sin relación con el operador oficial de la Línea 1.
+      Mapa base © colaboradores de OpenStreetMap.
+    </div>
+  </div>
+</footer>
+
+<nav class="tabbar" aria-label="Navegación móvil">
+  <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-7 9 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Inicio</a>
+  <a href="mapa.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3L3 6v15l6-3 6 3 6-3V3l-6 3z"/></svg>Mapa</a>
+  <a href="estacion.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>Estación</a>
+  <a href="index.html#asistente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Asistente</a>
+</nav>
+
+<div class="popover" id="popover" hidden role="dialog" aria-label="Detalle de estación"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/mapa.js"></script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Estación — Línea 1</title>
+<meta name="description" content="Próximos trenes, afluencia por hora, salidas y accesibilidad de cada estación de la Línea 1 del Metro de Lima.">
+<meta name="theme-color" content="#7AB51D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="banner-demo">Proyecto demostrativo, no oficial. Tiempos y afluencia simulados.</div>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="marca" href="index.html"><span class="marca__punto">1</span> LÍNEA 1</a>
+    <nav class="nav__links" aria-label="Principal">
+      <a href="index.html">Inicio</a>
+      <a href="mapa.html">Mapa</a>
+      <a href="estacion.html" aria-current="page">Estaciones</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="estacion-hero">
+    <div class="contenedor">
+      <div class="migas"><a href="index.html">Inicio</a> › <a href="mapa.html">Estaciones</a> › <span id="miga-nombre">…</span></div>
+      <h1 id="est-nombre">Estación</h1>
+      <p class="hero__sub" id="est-distrito"></p>
+
+      <div id="est-estado" class="estado" style="max-width:520px">
+        <span class="estado__pulso"></span><span class="estado__texto">Cargando…</span>
+      </div>
+
+      <div class="etiquetas" id="est-etiquetas"></div>
+
+      <div class="selector-estacion">
+        <label for="selector" style="font-size:.85rem;font-weight:700;color:var(--texto-suave)">Cambiar de estación:</label>
+        <select id="selector" style="font:inherit;padding:10px 14px;border-radius:999px;border:1.5px solid var(--borde);background:#fff;font-weight:600"></select>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="seccion__cabecera"><h2>Próximos trenes</h2></div>
+      <div class="rejilla rejilla--2" id="est-trenes"></div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:0">
+    <div class="contenedor">
+      <div class="rejilla rejilla--2">
+        <div>
+          <div class="seccion__cabecera"><h2>Afluencia estimada</h2></div>
+          <div class="tarjeta">
+            <div class="afluencia-grafico" id="est-afluencia" role="img" aria-label="Afluencia estimada por hora"></div>
+            <div class="leyenda">
+              <span><i style="background:#a8dc63"></i> Baja</span>
+              <span><i style="background:#7ab51d"></i> Media</span>
+              <span><i style="background:#f57c1f"></i> Alta</span>
+              <span><i style="background:#e5484d"></i> Muy alta</span>
+            </div>
+            <div class="destacado" id="est-mejor"></div>
+          </div>
+        </div>
+        <div>
+          <div class="seccion__cabecera"><h2>Cómo salir y conectar</h2></div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo"><span>🚪</span><h3>Salidas</h3></div>
+            <ul class="lista-simple" id="est-salidas"></ul>
+            <div class="tarjeta__titulo" style="margin-top:22px"><span>🔀</span><h3>Estaciones contiguas</h3></div>
+            <ul class="lista-simple" id="est-vecinas"></ul>
+            <div class="tarjeta__titulo" style="margin-top:22px"><span>🕐</span><h3>Horario</h3></div>
+            <ul class="lista-simple" id="est-horario"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:0">
+    <div class="contenedor">
+      <div class="seccion__cabecera">
+        <h2>Viajar desde aquí</h2>
+        <p>Calcula cuánto tardas hasta cualquier otra estación de la línea.</p>
+      </div>
+      <div class="planificador" style="max-width:520px">
+        <div class="campo">
+          <label for="destino">🏁 ¿A dónde vas?</label>
+          <select id="destino"></select>
+        </div>
+        <button type="button" class="btn btn--primario btn--bloque" id="calcular">Calcular viaje</button>
+        <div class="resultado" id="resultado" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:0">
+    <div class="contenedor">
+      <div class="seccion__cabecera"><h2>Ubicación en la línea</h2></div>
+      <div class="mapa-linea"><div class="linea" id="linea" role="list"></div></div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie__legal" style="border:0;margin:0;padding:0">
+      Proyecto independiente, sin relación con el operador oficial de la Línea 1. Datos de demostración.
+    </div>
+  </div>
+</footer>
+
+<nav class="tabbar" aria-label="Navegación móvil">
+  <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-7 9 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Inicio</a>
+  <a href="mapa.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3L3 6v15l6-3 6 3 6-3V3l-6 3z"/></svg>Mapa</a>
+  <a href="estacion.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>Estación</a>
+  <a href="index.html#asistente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Asistente</a>
+</nav>
+
+<div class="popover" id="popover" hidden role="dialog" aria-label="Detalle de estación"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/planner.js"></script>
+<script src="assets/js/estacion.js"></script>
+</body>
+</html>
