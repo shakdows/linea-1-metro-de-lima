@@ -23,7 +23,7 @@ navegador
 
 | Recurso | Para qué | Si falla |
 |---|---|---|
-| Google Fonts (Plus Jakarta Sans) | Tipografía | Cae a la fuente del sistema |
+| Google Fonts (Plus Jakarta Sans + Caveat) | Tipografía | Cae a la fuente del sistema |
 | Leaflet + OpenStreetMap | Mapa geográfico de `mapa.html` | Muestra un aviso; el esquema sigue funcionando |
 
 ### Convenciones
@@ -54,8 +54,14 @@ Vercel                        └── Edge Functions (ingesta en tiempo real)
 
 1. `npx create-next-app@latest --ts --tailwind`
 2. Portar `data.js` a `lib/linea1.ts` — es TypeScript casi sin tocar.
-3. Convertir cada bloque de `index.html` en un componente: `<EstadoServicio/>`,
-   `<Planificador/>`, `<MapaLinea/>`, `<ProximosTrenes/>`, `<Afluencia/>`.
+3. Convertir cada bloque de `index.html` en un componente. El HTML ya está
+   partido exactamente por estas fronteras:
+
+   ```
+   Navbar · Hero · TripPlanner · TripResult · MetroLineMap · StationTooltip
+   NextTrains · CrowdingChart · MetroCard · ServiceAlerts · AIChat
+   NearbyStations · Footer
+   ```
 4. Mover el CSS a `globals.css` manteniendo las mismas variables.
 5. Cargar los datos con Server Components + `revalidate`.
 6. El asistente pasa a una Route Handler (`app/api/asistente/route.ts`) que
@@ -73,7 +79,8 @@ create table estaciones (
   lat double precision,
   lng double precision,
   accesible boolean default true,
-  salidas text[]
+  salidas text[],
+  cerca text[]          -- referencias cercanas ("Museo de la Nación")
 );
 
 create table horarios (

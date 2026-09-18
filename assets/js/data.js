@@ -20,7 +20,7 @@
 const LINEA1 = {
   nombre: 'Línea 1',
   sistema: 'Metro de Lima',
-  color: '#7AB51D',
+  color: '#009B3A',
   horario: { apertura: '05:30', cierre: '22:30' },
   tarifa: { adulto: 1.5, moneda: 'S/' },
 
@@ -33,24 +33,24 @@ const LINEA1 = {
   /* 26 estaciones, de sur a norte (Villa El Salvador → Bayóvar).
      `minutos` = tiempo estimado desde la estación anterior. */
   estaciones: [
-    { id: 'villa-el-salvador', nombre: 'Villa El Salvador', distrito: 'Villa El Salvador', minutos: 0, lat: -12.2136, lng: -76.9370, accesible: true, terminal: true, salidas: ['Av. Separadora Industrial', 'Terminal terrestre'] },
-    { id: 'parque-industrial', nombre: 'Parque Industrial', distrito: 'Villa El Salvador', minutos: 2, lat: -12.2050, lng: -76.9352, accesible: true, salidas: ['Av. Separadora Industrial'] },
+    { id: 'villa-el-salvador', nombre: 'Villa El Salvador', distrito: 'Villa El Salvador', minutos: 0, lat: -12.2136, lng: -76.9370, accesible: true, terminal: true, salidas: ['Av. Separadora Industrial', 'Terminal terrestre'], cerca: ['Terminal terrestre de Villa El Salvador', 'Parque Zonal Huáscar'] },
+    { id: 'parque-industrial', nombre: 'Parque Industrial', distrito: 'Villa El Salvador', minutos: 2, lat: -12.2050, lng: -76.9352, accesible: true, salidas: ['Av. Separadora Industrial'], cerca: ['Parque Industrial de Villa El Salvador'] },
     { id: 'pumacahua', nombre: 'Pumacahua', distrito: 'Villa El Salvador', minutos: 2, lat: -12.1960, lng: -76.9345, accesible: true, salidas: ['Av. Pumacahua'] },
-    { id: 'villa-maria', nombre: 'Villa María', distrito: 'Villa María del Triunfo', minutos: 2, lat: -12.1866, lng: -76.9370, accesible: true, salidas: ['Av. Pachacútec'] },
-    { id: 'maria-auxiliadora', nombre: 'María Auxiliadora', distrito: 'San Juan de Miraflores', minutos: 2, lat: -12.1755, lng: -76.9426, accesible: true, salidas: ['Hospital María Auxiliadora'] },
+    { id: 'villa-maria', nombre: 'Villa María', distrito: 'Villa María del Triunfo', minutos: 2, lat: -12.1866, lng: -76.9370, accesible: true, salidas: ['Av. Pachacútec'], cerca: ['Municipalidad de Villa María del Triunfo'] },
+    { id: 'maria-auxiliadora', nombre: 'María Auxiliadora', distrito: 'San Juan de Miraflores', minutos: 2, lat: -12.1755, lng: -76.9426, accesible: true, salidas: ['Hospital María Auxiliadora'], cerca: ['Hospital María Auxiliadora'] },
     { id: 'san-juan', nombre: 'San Juan', distrito: 'San Juan de Miraflores', minutos: 2, lat: -12.1670, lng: -76.9455, accesible: true, salidas: ['Av. Los Héroes'] },
-    { id: 'atocongo', nombre: 'Atocongo', distrito: 'San Juan de Miraflores', minutos: 2, lat: -12.1581, lng: -76.9740, accesible: true, salidas: ['Av. Los Héroes', 'C.C. Atocongo'] },
+    { id: 'atocongo', nombre: 'Atocongo', distrito: 'San Juan de Miraflores', minutos: 2, lat: -12.1581, lng: -76.9740, accesible: true, salidas: ['Av. Los Héroes', 'C.C. Atocongo'], cerca: ['Centro comercial Atocongo'] },
     { id: 'jorge-chavez', nombre: 'Jorge Chávez', distrito: 'Santiago de Surco', minutos: 2, lat: -12.1480, lng: -76.9880, accesible: true, salidas: ['Av. Tomás Marsano'] },
     { id: 'ayacucho', nombre: 'Ayacucho', distrito: 'Santiago de Surco', minutos: 2, lat: -12.1400, lng: -76.9930, accesible: true, salidas: ['Av. Ayacucho'] },
     { id: 'cabitos', nombre: 'Cabitos', distrito: 'Santiago de Surco', minutos: 2, lat: -12.1320, lng: -76.9960, accesible: true, salidas: ['Av. Aviación'] },
     { id: 'angamos', nombre: 'Angamos', distrito: 'Surquillo', minutos: 2, lat: -12.1190, lng: -77.0010, accesible: true, salidas: ['Av. Angamos Este'] },
     { id: 'san-borja-sur', nombre: 'San Borja Sur', distrito: 'San Borja', minutos: 2, lat: -12.1060, lng: -77.0000, accesible: true, salidas: ['Av. San Borja Sur'] },
-    { id: 'la-cultura', nombre: 'La Cultura', distrito: 'San Borja', minutos: 2, lat: -12.0970, lng: -76.9980, accesible: true, salidas: ['Av. Javier Prado Este', 'Museo de la Nación'] },
-    { id: 'arriola', nombre: 'Arriola', distrito: 'La Victoria', minutos: 3, lat: -12.0770, lng: -77.0010, accesible: true, salidas: ['Av. Nicolás Arriola'] },
-    { id: 'gamarra', nombre: 'Gamarra', distrito: 'La Victoria', minutos: 2, lat: -12.0680, lng: -77.0030, accesible: true, salidas: ['Av. Aviación', 'Emporio Gamarra'] },
-    { id: 'miguel-grau', nombre: 'Miguel Grau', distrito: 'La Victoria', minutos: 2, lat: -12.0570, lng: -77.0170, accesible: true, salidas: ['Av. Grau', 'Conexión Metropolitano'], conexiones: ['Metropolitano (Est. Grau)'] },
+    { id: 'la-cultura', nombre: 'La Cultura', distrito: 'San Borja', minutos: 2, lat: -12.0970, lng: -76.9980, accesible: true, salidas: ['Av. Javier Prado Este', 'Museo de la Nación'], cerca: ['Ministerio de Cultura', 'Museo de la Nación', 'Gran Teatro Nacional'] },
+    { id: 'arriola', nombre: 'Nicolás Arriola', distrito: 'La Victoria', minutos: 3, lat: -12.0770, lng: -77.0010, accesible: true, salidas: ['Av. Nicolás Arriola'] },
+    { id: 'gamarra', nombre: 'Gamarra', distrito: 'La Victoria', minutos: 2, lat: -12.0680, lng: -77.0030, accesible: true, salidas: ['Av. Aviación', 'Emporio Gamarra'], cerca: ['Emporio Comercial de Gamarra'] },
+    { id: 'miguel-grau', nombre: 'Miguel Grau', distrito: 'La Victoria', minutos: 2, lat: -12.0570, lng: -77.0170, accesible: true, salidas: ['Av. Grau', 'Conexión Metropolitano'], conexiones: ['Metropolitano (Est. Grau)'], cerca: ['Estación Grau del Metropolitano', 'Av. Grau'] },
     { id: 'el-angel', nombre: 'El Ángel', distrito: 'El Agustino', minutos: 3, lat: -12.0470, lng: -77.0080, accesible: true, salidas: ['Av. Locumba'] },
-    { id: 'presbitero-maestro', nombre: 'Presbítero Maestro', distrito: 'El Agustino', minutos: 2, lat: -12.0430, lng: -77.0030, accesible: true, salidas: ['Av. Ancash'] },
+    { id: 'presbitero-maestro', nombre: 'Presbítero Maestro', distrito: 'El Agustino', minutos: 2, lat: -12.0430, lng: -77.0030, accesible: true, salidas: ['Av. Ancash'], cerca: ['Cementerio Presbítero Maestro'] },
     { id: 'caja-de-agua', nombre: 'Caja de Agua', distrito: 'San Juan de Lurigancho', minutos: 3, lat: -12.0290, lng: -77.0010, accesible: true, salidas: ['Av. Próceres de la Independencia'] },
     { id: 'piramide-del-sol', nombre: 'Pirámide del Sol', distrito: 'San Juan de Lurigancho', minutos: 2, lat: -12.0200, lng: -76.9980, accesible: true, salidas: ['Av. Próceres de la Independencia'] },
     { id: 'los-jardines', nombre: 'Los Jardines', distrito: 'San Juan de Lurigancho', minutos: 2, lat: -12.0100, lng: -76.9960, accesible: true, salidas: ['Av. Próceres de la Independencia'] },
@@ -97,6 +97,16 @@ const LINEA1 = {
       fecha: '2026-09-10'
     }
   ],
+
+  /* Procedencia de cada dato, para etiquetarlo en la interfaz.
+     Ningún dato de este proyecto es todavía 'vivo': cuando se conecte una API
+     real, basta con cambiar la clave que usa cada componente. */
+  procedencia: {
+    vivo:         { clave: 'vivo',  icono: '🟢', texto: 'Tiempo real', detalle: 'Dato recibido de la operación en vivo.' },
+    estimado:     { clave: 'est',   icono: '🟣', texto: 'Estimación',  detalle: 'Calculado a partir del patrón habitual de la línea. No es un dato en vivo.' },
+    demostracion: { clave: 'demo',  icono: '⚪', texto: 'Demostración', detalle: 'Valor de ejemplo. Requiere conectar la fuente oficial.' },
+    oficial:      { clave: 'ofi',   icono: '🔵', texto: 'Dato fijo',    detalle: 'Información estable publicada por el operador.' }
+  },
 
   /* Estado global del servicio: 'normal' | 'demoras' | 'interrumpido' */
   estado: {
@@ -176,31 +186,53 @@ const L1 = {
     return { clave: 'bajo', texto: 'Baja', valor: v };
   },
 
-  /* Mejor franja para viajar dentro del horario de servicio */
+  /* Mejor franja para viajar. Se excluyen la primera y la última hora de
+     servicio: tienen poca gente pero son malas recomendaciones (el servicio
+     está por abrir o por cerrar). */
   mejorFranja() {
     const horas = Object.keys(LINEA1.afluencia).map(Number).sort((x, y) => x - y);
-    let mejor = horas[0];
-    horas.forEach((h) => {
-      if (LINEA1.afluencia[h] < LINEA1.afluencia[mejor]) mejor = h;
-    });
-    return mejor;
+    const candidatas = horas.slice(1, -1);
+    return candidatas.reduce((mejor, h) => (LINEA1.afluencia[h] < LINEA1.afluencia[mejor] ? h : mejor), candidatas[0]);
   },
 
-  /* Estación más cercana a unas coordenadas, por distancia haversine */
-  masCercana(lat, lng) {
+  /* Distancia en kilómetros entre dos coordenadas (haversine) */
+  distanciaKm(lat1, lng1, lat2, lng2) {
     const R = 6371;
     const rad = (x) => (x * Math.PI) / 180;
-    let mejor = null;
-    LINEA1.estaciones.forEach((e) => {
-      const dLat = rad(e.lat - lat);
-      const dLng = rad(e.lng - lng);
-      const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(rad(lat)) * Math.cos(rad(e.lat)) * Math.sin(dLng / 2) ** 2;
-      const d = 2 * R * Math.asin(Math.sqrt(a));
-      if (!mejor || d < mejor.km) mejor = { estacion: e, km: d };
-    });
-    return mejor;
+    const dLat = rad(lat2 - lat1);
+    const dLng = rad(lng2 - lng1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  },
+
+  /* Caminata estimada: la distancia real es ~30 % mayor que la línea recta
+     por el trazado de las calles, a 4,5 km/h de paso medio. */
+  caminando(km) {
+    const metros = Math.round(km * 1300);
+    const minutos = Math.max(1, Math.round((metros / 1000 / 4.5) * 60));
+    return {
+      metros,
+      minutos,
+      texto: metros < 1000 ? `${metros} m` : `${(metros / 1000).toFixed(1)} km`
+    };
+  },
+
+  /* Las N estaciones más cercanas a unas coordenadas, ordenadas por distancia */
+  cercanas(lat, lng, n = 3) {
+    return LINEA1.estaciones
+      .map((estacion) => {
+        const km = this.distanciaKm(lat, lng, estacion.lat, estacion.lng);
+        return { estacion, km, caminata: this.caminando(km) };
+      })
+      .sort((a, b) => a.km - b.km)
+      .slice(0, n);
+  },
+
+  /* Estación más cercana a unas coordenadas */
+  masCercana(lat, lng) {
+    return this.cercanas(lat, lng, 1)[0];
   }
 };
 

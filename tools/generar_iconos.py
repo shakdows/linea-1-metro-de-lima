@@ -14,8 +14,8 @@ import struct
 import zlib
 from pathlib import Path
 
-VERDE = (122, 181, 29)
-VERDE_OSCURO = (22, 60, 42)
+VERDE = (0, 155, 58)
+VERDE_OSCURO = (0, 107, 44)
 BLANCO = (255, 255, 255)
 
 SALIDA = Path(__file__).resolve().parent.parent / "assets" / "img"

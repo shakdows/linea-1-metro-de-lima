@@ -14,6 +14,7 @@ const RECURSOS = [
   './assets/js/app.js',
   './assets/js/estacion.js',
   './assets/js/mapa.js',
+  './assets/img/hero-tren.svg',
   './assets/img/favicon.svg',
   './assets/img/icon-192.png',
   './assets/img/icon-512.png',

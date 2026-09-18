@@ -25,10 +25,20 @@ aquí está separado con claridad el origen de cada dato.
 | **Estado del servicio** | Constante `normal` | Endpoint de estado |
 | **Saldo de la tarjeta** | Número fijo con animación | API de la tarjeta, con autenticación |
 | **Salidas de estación** | Incompletas, una o dos por estación | Listado oficial de vestíbulos y salidas |
+| **Referencias cercanas** | Solo 9 de 26 estaciones | Listado de puntos de interés por estación |
+| **Distancia caminando** | Línea recta × 1,3 a 4,5 km/h | Ruteo peatonal real (OSRM, Mapbox) |
 | **Horario 05:30–22:30** | Aproximado y uniforme | Horario por estación y sentido |
 
-Todo lo simulado está marcado en pantalla con la banda superior de aviso y con
-las palabras «estimado» o «aproximado» junto al dato.
+Todo lo simulado está marcado en pantalla de dos formas: la banda superior de
+aviso, y una **etiqueta de procedencia** junto a cada dato:
+
+| Etiqueta | Significado |
+|---|---|
+| 🟢 Tiempo real | Recibido de la operación en vivo *(ningún dato lo es todavía)* |
+| 🟣 Estimación | Calculado sobre el patrón habitual de la línea |
+| ⚪ Demostración | Valor de ejemplo; requiere conectar la fuente oficial |
+
+Las define `LINEA1.procedencia` en `data.js` y las pinta `UI.etiquetaDato()`.
 
 ## Dónde se cambia
 

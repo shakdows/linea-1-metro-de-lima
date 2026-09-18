@@ -1,16 +1,17 @@
 # Línea 1 — Metro de Lima
 
-Concepto de **web-app de movilidad** para la Línea 1 del Metro de Lima: en vez de
-una página institucional, una herramienta para gestionar el viaje — planificador,
-mapa interactivo de las 26 estaciones, próximos trenes, afluencia por hora,
-avisos de servicio y un asistente que responde en lenguaje natural.
+Concepto de **web-app de movilidad** para la Línea 1 del Metro de Lima. No es
+una web institucional: es la herramienta con la que un pasajero resuelve su
+viaje — planificador, mapa interactivo de las 26 estaciones, próximos trenes,
+afluencia por franja horaria, avisos y un asistente que entiende lenguaje
+natural.
 
-> ⚠️ **Proyecto independiente y demostrativo.** No tiene relación con el operador
-> oficial de la Línea 1. Los tiempos, frecuencias y niveles de afluencia son
-> **estimaciones simuladas** y no deben usarse para tomar un tren.
+> ⚠️ **Interfaz conceptual con fines académicos.** No representa el sitio oficial
+> de Línea 1 ni tiene relación con su operador. Los tiempos, frecuencias y
+> niveles de afluencia son **estimaciones simuladas**.
 > Ver [`docs/DATOS.md`](docs/DATOS.md).
 
-![Portada en escritorio](assets/img/screenshot-escritorio.png)
+![Vista de escritorio](assets/img/screenshot-escritorio.png)
 
 <p align="center">
   <img src="assets/img/screenshot-movil.png" alt="Vista móvil" width="300">
@@ -22,24 +23,36 @@ avisos de servicio y un asistente que responde en lenguaje natural.
 
 | Pantalla | Archivo | Contenido |
 |---|---|---|
-| Inicio | `index.html` | Hero, estado del servicio, planificador, mapa, próximos trenes, afluencia, tarjeta, avisos, asistente |
-| Mapa | `mapa.html` | Esquema de la línea + mapa geográfico (Leaflet) + listado por distrito |
-| Estación | `estacion.html?id=gamarra` | Ficha por estación: trenes, afluencia, salidas, vecinas, horario |
+| Inicio | `index.html` | Hero, planificador, resultado del viaje, mapa, próximos trenes, afluencia, tarjeta, avisos, asistente, estaciones cercanas |
+| Mapa | `mapa.html` | Esquema de la línea, buscador, ubicación, mapa geográfico (Leaflet) y listado por distrito |
+| Estación | `estacion.html?id=gamarra` | Trenes por sentido, afluencia, salidas numeradas, referencias cercanas, contiguas y planificador |
 
-**Funcionalidades**
+### Funcionalidades
 
-- 🗺️ **Mapa interactivo** — las 26 estaciones como elementos clicables, con tarjeta
-  flotante de próximos trenes, afluencia y accesibilidad.
-- 🧭 **Planificador de viaje** — origen/destino, itinerario animado estación por
-  estación, tiempo a bordo, hora de llegada y salida recomendada al bajar.
-- 🚆 **Próximos trenes** en ambos sentidos, con frecuencia según la franja horaria.
-- 👥 **Afluencia por hora** con recomendación de la mejor franja para viajar.
-- 🟢 **Estado del servicio** siempre visible (normal / demoras / interrumpido).
-- ✦ **Asistente** que entiende preguntas como *"quiero llegar a Gamarra antes de
-  las 9:30 desde San Borja Sur"*. Funciona en el navegador, sin API ni clave.
-- 📍 **Usar mi ubicación** para detectar la estación más cercana.
-- 📱 **PWA** — instalable desde el navegador, con barra de navegación inferior y
-  funcionamiento sin conexión gracias al service worker.
+- 🧭 **Planificador protagonista** — tarjeta flotante sobre el hero, con inversión
+  de origen/destino y detección de ubicación.
+- 🎬 **Resultado animado** — skeleton de carga, recorrido que se dibuja
+  progresivamente, cuatro métricas, «Ver detalle de la ruta» expandible e
+  **Iniciar viaje** con cuenta atrás en vivo hasta la llegada.
+- 🗺️ **Mapa interactivo real** — las 26 estaciones son botones. Al tocar una:
+  halo animado, ficha con próximos trenes y afluencia, y botones para elegirla
+  como **origen** o **destino**. Con una ruta activa, el tramo se ilumina, el
+  resto baja de opacidad y un tren recorre el trayecto.
+- 🚆 **Próximos trenes** en ambos sentidos, con estado (*En plataforma*,
+  *Llegando*, *En camino*) y actualización cada 15 s.
+- 📊 **Afluencia por hora** — al pasar o tocar una barra se muestra la hora, el
+  nivel y el porcentaje estimado de ocupación, más la mejor franja del día.
+- ✦ **Asistente** que responde rutas, horarios, tarifas, afluencia y llegadas del
+  tipo *«llegar a Gamarra antes de las 9:30 desde San Borja Sur»*, con animación
+  de «escribiendo», tarjeta de ruta y botón **Ver en el mapa**. Todo en el
+  navegador: sin servidor y sin clave de API.
+- 📍 **Estaciones cercanas** con distancia y minutos caminando.
+- 💳 **Mi tarjeta** con saldo y viajes disponibles calculados sobre la tarifa.
+- 🚦 **Estado del servicio** siempre visible en la barra; cuando hay incidencia
+  aparece una banda superior con el tramo afectado.
+- 🏷️ **Procedencia de cada dato** — 🟢 tiempo real, 🟣 estimación, ⚪ demostración.
+- 📱 **Mobile first de verdad** — barra inferior fija, mapa con scroll lateral,
+  tarjetas en una columna, PWA instalable con service worker.
 
 ## Cómo ejecutarlo
 
@@ -58,9 +71,8 @@ Abre <http://localhost:8000>.
 
 ## Despliegue
 
-**GitHub Pages** — ya viene configurado. En *Settings → Pages* elige
-`GitHub Actions` y cada push a la rama principal publica el sitio
-(`.github/workflows/pages.yml`).
+**GitHub Pages** — ya configurado en `.github/workflows/pages.yml`. En
+*Settings → Pages* elige `GitHub Actions`.
 
 **Vercel** — importa el repositorio, framework *Other*, sin comando de build y
 con `.` como directorio de salida.
@@ -74,18 +86,30 @@ estacion.html           Ficha de estación (?id=…)
 manifest.webmanifest    Configuración PWA
 sw.js                   Service worker (cache-first)
 assets/
-  css/style.css         Sistema de diseño completo
+  css/style.css         Sistema de diseño completo (todo en :root)
   js/data.js            Las 26 estaciones y utilidades de dominio
-  js/ui.js              Componentes de interfaz reutilizables
-  js/planner.js         Cálculo y animación del viaje
+  js/ui.js              Componentes: estado, mapa, tooltip, trenes, afluencia…
+  js/planner.js         Cálculo del viaje y animación del recorrido
   js/assistant.js       Asistente por reglas
-  js/app.js             Arranque de la portada
-  js/estacion.js        Arranque de la ficha de estación
-  js/mapa.js            Arranque del mapa
-  img/                  Iconos y portada (marcadores de posición)
+  js/app.js             Portada
+  js/estacion.js        Ficha de estación
+  js/mapa.js            Mapa, buscador y ubicación
+  img/hero-tren.svg     Ilustración del hero (sustituible por foto)
 tools/generar_iconos.py Genera los PNG de la PWA sin dependencias
 docs/                   Datos, arquitectura y guía de diseño
 ```
+
+## Personalizar el aspecto
+
+Toda la identidad vive en `:root` de `assets/css/style.css`:
+
+```css
+--verde: #009b3a;      --verde-oscuro: #006b2c;   --verde-claro: #e8f7ed;
+--fondo: #f7f9f8;      --texto: #101817;          --texto-suave: #68736f;
+--amarillo: #f5b82e;   --naranja: #f07c1f;        --rojo: #e5484d;
+```
+
+Cambiando esas variables cambia el sitio entero, sin tocar el HTML.
 
 ## Documentación
 

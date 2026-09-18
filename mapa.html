@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mapa de la Línea 1 — Metro de Lima</title>
-<meta name="description" content="Mapa esquemático y geográfico de las 26 estaciones de la Línea 1 del Metro de Lima.">
-<meta name="theme-color" content="#7AB51D">
+<meta name="description" content="Mapa esquemático y geográfico de las 26 estaciones de la Línea 1 del Metro de Lima, con buscador y estación más cercana.">
+<meta name="theme-color" content="#009B3A">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,51 +17,80 @@
 </head>
 <body>
 
-<div class="banner-demo">
-  Las coordenadas del mapa geográfico son aproximadas y sirven solo de referencia.
-</div>
+<div class="banner-demo">Las coordenadas del mapa geográfico son aproximadas y sirven solo de referencia.</div>
+<div class="incidencia" id="incidencia" hidden></div>
 
 <header class="nav">
   <div class="nav__inner">
-    <a class="marca" href="index.html"><span class="marca__punto">1</span> LÍNEA 1</a>
+    <a class="marca" href="index.html">
+      <span class="marca__logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="13" rx="4"/><path d="M4 11h16M8 20l-2 2M16 20l2 2"/></svg></span>
+      <span class="marca__texto"><span class="marca__titulo">LÍNEA 1</span><span class="marca__sub">Metro de Lima</span></span>
+    </a>
     <nav class="nav__links" aria-label="Principal">
       <a href="index.html">Inicio</a>
       <a href="mapa.html" aria-current="page">Mapa</a>
       <a href="estacion.html">Estaciones</a>
+      <a href="index.html#tarjeta">Tarjeta</a>
+      <a href="index.html#avisos">Avisos</a>
     </nav>
+    <div class="nav__acciones">
+      <a class="estado-pill" id="estado-pill" href="index.html#avisos" role="status">
+        <span class="estado-pill__punto"></span>
+        <span class="estado-pill__texto">
+          <span class="estado-pill__titulo">Servicio normal</span>
+          <span class="estado-pill__sub">Todo opera con normalidad</span>
+        </span>
+      </a>
+    </div>
   </div>
 </header>
 
 <main>
   <section class="seccion">
     <div class="contenedor">
-      <div class="seccion__cabecera">
-        <h1>Mapa de la Línea 1</h1>
-        <p>26 estaciones entre Villa El Salvador y Bayóvar. Toca una estación para abrir su ficha.</p>
+      <h1 style="font-size:clamp(1.8rem,4vw,2.6rem)">Mapa de la Línea 1</h1>
+      <p style="color:var(--texto-suave);max-width:60ch">26 estaciones entre Villa El Salvador y Bayóvar. Busca una estación, detecta la más cercana o toca cualquier punto para abrir su ficha.</p>
+
+      <div class="mapa-herramientas">
+        <div class="buscador">
+          <span class="buscador__icono"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span>
+          <label class="visualmente-oculto" for="buscar">Buscar estación</label>
+          <input id="buscar" placeholder="Buscar estación o distrito…" autocomplete="off">
+          <div class="buscador__resultados" id="buscar-resultados" hidden></div>
+        </div>
+        <button class="btn btn--suave" id="detectar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+          Detectar mi ubicación
+        </button>
       </div>
 
-      <div id="estado-servicio" class="estado" style="max-width:520px;margin-bottom:22px">
-        <span class="estado__pulso"></span><span class="estado__texto">Cargando…</span>
-      </div>
+      <div id="caminata"></div>
 
-      <div class="mapa-linea"><div class="linea" id="linea" role="list"></div></div>
+      <div class="card mapa-card" style="margin-top:16px">
+        <div class="linea-envoltura" id="linea-envoltura">
+          <div class="linea" id="linea" role="list"></div>
+        </div>
+      </div>
     </div>
   </section>
 
   <section class="seccion" style="padding-top:0">
     <div class="contenedor">
-      <div class="seccion__cabecera">
-        <h2>Vista geográfica</h2>
-        <p>Trazado aproximado sobre el plano de Lima. Requiere conexión a internet.</p>
+      <div class="card">
+        <div class="card__cabecera">
+          <span class="card__icono"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3L3 6v15l6-3 6 3 6-3V3l-6 3z"/><path d="M9 3v15M15 6v15"/></svg></span>
+          <h2>Vista geográfica</h2>
+          <span class="dato dato--demo" style="margin-left:auto" title="Coordenadas aproximadas.">⚪ Aproximado</span>
+        </div>
+        <div id="mapa-geo"><div class="mapa-fallback">Cargando el mapa…</div></div>
       </div>
-      <div id="mapa-geo"><div class="mapa-fallback">Cargando el mapa…</div></div>
     </div>
   </section>
 
   <section class="seccion" style="padding-top:0">
     <div class="contenedor">
-      <div class="seccion__cabecera"><h2>Todas las estaciones</h2></div>
-      <div class="rejilla rejilla--3" id="listado"></div>
+      <div class="card__cabecera"><h2>Todas las estaciones</h2></div>
+      <div class="rejilla rejilla--cercanas" id="listado"></div>
     </div>
   </section>
 </main>
@@ -69,20 +98,20 @@
 <footer class="pie">
   <div class="contenedor">
     <div class="pie__legal" style="border:0;margin:0;padding:0">
-      Proyecto independiente, sin relación con el operador oficial de la Línea 1.
-      Mapa base © colaboradores de OpenStreetMap.
+      <span>Interfaz conceptual para fines académicos. No representa el sitio oficial de Línea 1.</span>
+      <span>Mapa base © colaboradores de OpenStreetMap.</span>
     </div>
   </div>
 </footer>
 
 <nav class="tabbar" aria-label="Navegación móvil">
-  <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-7 9 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Inicio</a>
-  <a href="mapa.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3L3 6v15l6-3 6 3 6-3V3l-6 3z"/></svg>Mapa</a>
-  <a href="estacion.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>Estación</a>
-  <a href="index.html#asistente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Asistente</a>
+  <a href="index.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-7 9 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Inicio</a>
+  <a href="mapa.html" aria-current="page"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3L3 6v15l6-3 6 3 6-3V3l-6 3z"/></svg>Mapa</a>
+  <a href="estacion.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="13" rx="4"/><path d="M4 11h16"/></svg>Estaciones</a>
+  <a href="index.html#asistente"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>Asistente</a>
 </nav>
 
-<div class="popover" id="popover" hidden role="dialog" aria-label="Detalle de estación"></div>
+<div class="tooltip-estacion" id="tooltip" hidden role="dialog" aria-label="Detalle de estación"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
