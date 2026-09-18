@@ -12,7 +12,8 @@ vuelta, catálogo de estaciones, tarjeta, horarios, avisos y asistente.
 |---|---|
 | `/` | Portada: qué hace el proyecto, los módulos, el trazado animado y el botón de entrada |
 | `/app/` | La aplicación |
-| `/clasico/` | La primera versión del proyecto, conservada como archivo |
+| `/anterior/` | La disposición previa de la aplicación, antes del rediseño |
+| `/clasico/` | La primera versión del proyecto, en HTML y JS sin build |
 
 La aplicación vive en [`web/`](web/): Next.js + TypeScript + Tailwind CSS +
 Framer Motion + Leaflet, exportada como sitio estático.
@@ -94,18 +95,39 @@ indica que debe construir `web/` y publicar `web/out`; no hace falta tocar el
 
 ```
 web/                    Portada y aplicación en Next.js (ver web/README.md)
+  public/anterior/      La disposición previa, ya construida (archivo)
   public/clasico/       La primera versión, en HTML y JS sin build (archivo)
 vercel.json             Le dice a Vercel que construya web/
 docs/                   Datos, arquitectura, guía de activos y arquetipo de usuario
 fotos linea 1/          Fotografías originales de las estaciones
 ```
 
-## La versión archivada
+## Las versiones archivadas
 
-La primera versión del proyecto —HTML, CSS y JavaScript sin build, con sus tres
-páginas: portada, mapa y ficha de estación— se conserva íntegra en
-`web/public/clasico/` y se publica en `/clasico/`. Está enlazada desde el pie de
-la portada.
+Nada se descarta: las dos versiones anteriores siguen publicadas y enlazadas
+desde el pie de la portada.
+
+### `/anterior/` — la disposición previa de la aplicación
+
+El diseño que tenía antes de este rediseño: barra lateral oscura, un panel a la
+vez y el mapa a la derecha. Es una **copia ya construida** del commit `f728763`,
+guardada en `web/public/anterior/`, así que se sirve tal cual sin volver a
+compilarse.
+
+Solo se le añadió, por JavaScript, una banda superior que avisa de que es una
+versión anterior y enlaza a la actual. Se inserta colgando de `<html>` y no de
+`<body>`: React hidrata los hijos de `body` y borraría cualquier nodo que no
+haya generado él.
+
+Comparte con la versión actual las fotografías de `/estaciones/` y `/img/`, así
+que no se duplican. Sus rutas internas se fijaron para un dominio servido desde
+la raíz; el flujo de GitHub Pages las reajusta al subdirectorio del repositorio
+antes de publicar.
+
+### `/clasico/` — la primera versión
+
+HTML, CSS y JavaScript sin build, con sus tres páginas: portada, mapa y ficha de
+estación. Se conserva íntegra en `web/public/clasico/`.
 
 Se le hicieron solo dos cambios al archivarla, ambos por seguridad y no por
 diseño:

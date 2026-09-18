@@ -37,6 +37,20 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build
 
+      - name: Reajustar la versión anterior al subdirectorio de Pages
+        # `public/anterior/` es una copia ya construida: sus rutas se fijaron
+        # para un dominio servido desde la raíz (Vercel). En Pages el sitio
+        # cuelga de /<repo>/, así que hay que anteponerlo. El cambio se limita
+        # a esa carpeta, no toca la aplicación actual.
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}
+        run: |
+          grep -rlZ -e '/anterior/' -e '/estaciones/' -e '/img/' web/out/anterior \
+            | xargs -0 --no-run-if-empty sed -i \
+                -e "s#\"/anterior/#\"$BASE_PATH/anterior/#g" \
+                -e "s#\"/estaciones/#\"$BASE_PATH/estaciones/#g" \
+                -e "s#\"/img/#\"$BASE_PATH/img/#g"
+
       - name: Preparar la publicación
         # GitHub Pages ignora las carpetas que empiezan por guion bajo (_next)
         run: touch web/out/.nojekyll

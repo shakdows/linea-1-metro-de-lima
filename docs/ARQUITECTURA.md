@@ -20,6 +20,7 @@ web/
 |---|---|
 | `/` | Portada. La única página con desplazamiento y secciones: presenta el proyecto, muestra los módulos y el trazado, y lleva a la aplicación |
 | `/app/` | La aplicación. No se comporta como una página |
+| `/anterior/` | La disposición previa de la aplicación, ya construida y archivada |
 | `/clasico/` | La primera versión, archivada: se sirve tal cual desde `public/`, sin pasar por Next |
 
 La separación es deliberada: entrar directamente al espacio de trabajo dejaba
@@ -105,10 +106,22 @@ leen datos en Server Components.
   la barra final que ya añade `next.config.ts` y los `.css` y `.js` acabarían
   redirigidos a un 404.
 
-## La versión archivada
+## Las versiones archivadas
 
-`/clasico/` son archivos estáticos dentro de `public/`, así que Next no los
-procesa: se copian al `out/` tal cual. Conviene saber dos cosas:
+`/anterior/` y `/clasico/` son archivos estáticos dentro de `public/`, así que
+Next no los procesa: se copian al `out/` tal cual.
+
+De `/anterior/` conviene saber dos cosas:
+
+- **Es una copia ya construida** del commit `f728763`, no código que se
+  recompile. Sus rutas internas llevan el prefijo `/anterior`, fijado en el
+  momento de construirla, así que solo encajan si el sitio se sirve desde la
+  raíz del dominio. El flujo de GitHub Pages las reajusta con un `sed` acotado
+  a esa carpeta antes de publicar.
+- **Su banda de aviso cuelga de `<html>`, no de `<body>`.** React hidrata los
+  hijos de `body`: un nodo inyectado ahí lo borra al hidratar. Está comprobado.
+
+De `/clasico/`:
 
 - **No registra service worker.** El original lo hacía con ámbito `/`, y como
   era «caché primero» seguía sirviendo la portada antigua después de publicar

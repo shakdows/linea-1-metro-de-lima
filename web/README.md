@@ -6,6 +6,7 @@ Dos rutas, ambas exportadas como HTML estático:
 |---|---|---|
 | `/` | `app/page.tsx` | Portada: presenta el proyecto y lleva a la aplicación |
 | `/app/` | `app/app/page.tsx` | La aplicación: barra lateral fija, barra superior y un área central que cambia de módulo sin recargar |
+| `/anterior/` | `public/anterior/` | La disposición previa de la aplicación, ya construida y servida tal cual |
 | `/clasico/` | `public/clasico/` | La primera versión del proyecto, servida tal cual desde `public/` |
 
 La portada es la única página con desplazamiento y secciones. Todo lo demás
@@ -60,6 +61,8 @@ components/
   ui.tsx                Panel, PanelHeader, Pill, Button, Stat, Empty
 public/
   estaciones/           Fotografías de 21 de las 26 estaciones (WebP)
+  img/                  Fotografías de tren y viaducto que usa /anterior/
+  anterior/             La disposición previa de la aplicación, ya construida
   clasico/              La primera versión del proyecto, archivada
 data/
   stations.ts           Las 26 estaciones, frecuencias, afluencia y avisos

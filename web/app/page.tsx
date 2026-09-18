@@ -16,6 +16,7 @@ const APP = "/app/";
    (que no son rutas de Next) necesitan el prefijo a mano */
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const CLASICO = `${BASE}/clasico/index.html`;
+const ANTERIOR = `${BASE}/anterior/index.html`;
 
 const CIFRAS = [
   { valor: STATIONS.length, etiqueta: "estaciones" },
@@ -347,15 +348,25 @@ function Pie() {
             distritos de las estaciones son reales; las coordenadas son aproximadas y los
             horarios, frecuencias, afluencia y saldos son estimaciones simuladas.
           </p>
-          <p className="text-[11.5px] text-tinta-suave">
-            <a
-              href={CLASICO}
-              className="inline-flex items-center gap-1.5 font-medium text-tinta underline decoration-borde underline-offset-4 transition-colors hover:decoration-verde"
-            >
-              <History size={12} /> Ver la primera versión del proyecto
-            </a>
-            <span className="ml-2 opacity-80">— HTML y JavaScript sin build, conservada como archivo.</span>
-          </p>
+          <div className="space-y-1.5">
+            <p className="flex items-center gap-1.5 text-[11.5px] font-medium text-tinta-suave">
+              <History size={12} /> Versiones anteriores, conservadas como archivo
+            </p>
+            <ul className="space-y-1 text-[11.5px] text-tinta-suave">
+              <li>
+                <a href={ANTERIOR} className="font-medium text-tinta underline decoration-borde underline-offset-4 transition-colors hover:decoration-verde">
+                  Disposición previa de la aplicación
+                </a>
+                <span className="ml-1.5 opacity-80">— antes del rediseño.</span>
+              </li>
+              <li>
+                <a href={CLASICO} className="font-medium text-tinta underline decoration-borde underline-offset-4 transition-colors hover:decoration-verde">
+                  Primera versión del proyecto
+                </a>
+                <span className="ml-1.5 opacity-80">— HTML y JavaScript sin build.</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </footer>
