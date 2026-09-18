@@ -1,7 +1,14 @@
-# Línea 1 — aplicación web
+# Línea 1 — portada y aplicación
 
-Espacio de trabajo de movilidad para la Línea 1 del Metro de Lima: barra lateral
-fija, barra superior y un área central que cambia de módulo sin recargar.
+Dos rutas, ambas exportadas como HTML estático:
+
+| Ruta | Archivo | Qué es |
+|---|---|---|
+| `/` | `app/page.tsx` | Portada: presenta el proyecto y lleva a la aplicación |
+| `/app/` | `app/app/page.tsx` | La aplicación: barra lateral fija, barra superior y un área central que cambia de módulo sin recargar |
+
+La portada es la única página con desplazamiento y secciones. Todo lo demás
+vive dentro de `/app/`, que no se comporta como una página.
 
 ## Ejecutar
 
@@ -23,8 +30,13 @@ npm run build
 app/
   layout.tsx            Fuente, metadatos y tema
   globals.css           Tokens de diseño (@theme) y estilos de Leaflet
-  page.tsx              Estado compartido y elección del módulo activo
+  page.tsx              Portada
+  app/
+    layout.tsx          Metadatos de la aplicación
+    page.tsx            Estado compartido y elección del módulo activo
 components/
+  landing/
+    LineaDiagrama.tsx   El trazado real proyectado a SVG, con el tren recorriéndolo
   shell/
     AppShell.tsx        Armazón persistente; solo se reemplaza el centro
     navigation.ts       Definición de los ocho módulos

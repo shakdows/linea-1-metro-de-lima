@@ -1,10 +1,17 @@
 # Línea 1 — Metro de Lima
 
-Aplicación web de movilidad para la Línea 1 del Metro de Lima. No es una web
-institucional ni una *landing*: es un **espacio de trabajo** con barra lateral
-fija, barra superior y un área central que cambia de módulo sin recargar —
-mapa geográfico con seguimiento del tren, planificador de ida y vuelta,
-catálogo de estaciones, tarjeta, horarios, avisos y asistente.
+Aplicación web de movilidad para la Línea 1 del Metro de Lima.
+
+Son **dos piezas**: una portada que presenta el proyecto y un botón «Entrar», y
+detrás la aplicación propiamente dicha —un **espacio de trabajo** con barra
+lateral fija, barra superior y un área central que cambia de módulo sin
+recargar: mapa geográfico con seguimiento del tren, planificador de ida y
+vuelta, catálogo de estaciones, tarjeta, horarios, avisos y asistente.
+
+| Ruta | Qué es |
+|---|---|
+| `/` | Portada: qué hace el proyecto, los módulos, el trazado animado y el botón de entrada |
+| `/app/` | La aplicación |
 
 La aplicación vive en [`web/`](web/): Next.js + TypeScript + Tailwind CSS +
 Framer Motion + Leaflet, exportada como sitio estático.
@@ -16,7 +23,7 @@ Framer Motion + Leaflet, exportada como sitio estático.
 
 ---
 
-## Los módulos
+## Los módulos (dentro de `/app/`)
 
 Un único armazón (`AppShell`) y ocho áreas de trabajo. La barra lateral y la
 superior no se desmontan nunca; solo cambia el centro.
@@ -85,7 +92,7 @@ indica que debe construir `web/` y publicar `web/out`; no hace falta tocar el
 ## Estructura
 
 ```
-web/                    Aplicación Next.js (ver web/README.md)
+web/                    Portada y aplicación en Next.js (ver web/README.md)
 vercel.json             Le dice a Vercel que construya web/
 docs/                   Datos, arquitectura, guía de activos y arquetipo de usuario
 fotos linea 1/          Fotografías originales de las estaciones

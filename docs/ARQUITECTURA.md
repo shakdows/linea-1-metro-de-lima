@@ -14,9 +14,21 @@ web/
 └── Leaflet + OSM   → mapa geográfico
 ```
 
+## Dos rutas
+
+| Ruta | Qué es |
+|---|---|
+| `/` | Portada. La única página con desplazamiento y secciones: presenta el proyecto, muestra los módulos y el trazado, y lleva a la aplicación |
+| `/app/` | La aplicación. No se comporta como una página |
+
+La separación es deliberada: entrar directamente al espacio de trabajo dejaba
+al visitante sin contexto y hacía que la herramienta pareciera una web a medio
+hacer. La portada explica qué es y quién lo hizo; la aplicación no tiene que
+explicar nada.
+
 ## Un armazón, ocho módulos
 
-La aplicación no tiene páginas: tiene un **armazón persistente** y un área de
+Dentro de `/app/` no hay páginas: hay un **armazón persistente** y un área de
 trabajo que se reemplaza.
 
 ```
@@ -31,7 +43,7 @@ AppShell
 StationDrawer    ── cajón lateral derecho, por encima del armazón
 ```
 
-`app/page.tsx` es el único dueño del estado: módulo activo, reloj, estación
+`app/app/page.tsx` es el único dueño del estado: módulo activo, reloj, estación
 inspeccionada, señales de dibujo del mapa y —a través de `useTrip`— todo el
 viaje. Los módulos reciben lo que necesitan por props y no hablan entre sí.
 

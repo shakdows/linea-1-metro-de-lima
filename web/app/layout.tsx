@@ -10,7 +10,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Línea 1 — Metro de Lima",
+  title: {
+    default: "Línea 1 — Metro de Lima",
+    template: "%s",
+  },
   description:
     "Planifica tu viaje en la Línea 1 del Metro de Lima: mapa interactivo de ida y vuelta, seguimiento del tren, próximos trenes y afluencia por franja horaria.",
   applicationName: "Línea 1",

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Bell, Search, TrainFront } from "lucide-react";
 import { useState } from "react";
 import { SERVICE_STATUS, STATIONS } from "@/data/stations";
@@ -35,11 +36,11 @@ export function Topbar({
 
   return (
     <header className="flex h-[56px] shrink-0 items-center gap-4 border-b border-borde bg-superficie px-4 lg:px-5">
-      <span className="flex items-center gap-2 lg:hidden">
+      <Link href="/" aria-label="Volver a la portada" className="flex items-center gap-2 lg:hidden">
         <span className="grid size-7 place-items-center rounded-lg bg-verde text-white">
           <TrainFront size={15} strokeWidth={2.3} />
         </span>
-      </span>
+      </Link>
 
       <h1 className="hidden shrink-0 text-[14px] font-semibold tracking-tight sm:block">{MODULE_TITLES[module]}</h1>
 
