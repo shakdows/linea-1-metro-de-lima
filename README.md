@@ -11,7 +11,7 @@ El repositorio contiene **dos versiones**:
 | | Dónde | Qué es |
 |---|---|---|
 | **Aplicación** | [`web/`](web/) | Next.js + TypeScript + Tailwind + Framer Motion + Leaflet. Es lo que se publica. |
-| **Versión estática** | raíz del repo | HTML, CSS y JS sin build ni dependencias. Se publica en `/clasico/`. |
+| **Versión estática** | [`legacy/`](legacy/) | HTML, CSS y JS sin build ni dependencias. Se publica en `/clasico/`. |
 
 > ⚠️ **Interfaz conceptual con fines académicos.** No representa el sitio oficial
 > de Línea 1 ni tiene relación con su operador. Los tiempos, frecuencias y
@@ -93,7 +93,7 @@ npm run dev        # http://localhost:3000
 **La versión estática**, sin build ni dependencias:
 
 ```bash
-python3 -m http.server 8000     # desde la raíz del repo
+cd legacy && python3 -m http.server 8000
 ```
 
 ## Despliegue
@@ -102,14 +102,21 @@ python3 -m http.server 8000     # desde la raíz del repo
 app de `web/` y publica la versión estática en `/clasico/`. En
 *Settings → Pages* elige `GitHub Actions`.
 
-**Vercel** — importa el repositorio y pon `web` como *Root Directory*. El resto
-lo detecta solo.
+**Vercel** — importa el repositorio tal cual. El `vercel.json` de la raíz ya
+indica que debe construir `web/` y publicar `web/out`; no hace falta tocar el
+*Root Directory*.
+
+> La versión estática vivía antes en la raíz, y Vercel la servía en lugar de la
+> aplicación. Por eso está ahora en `legacy/`: en la raíz no queda ningún
+> `index.html` que pueda tomarse por el sitio.
 
 ## Estructura
 
 ```
 web/                    Aplicación Next.js (ver web/README.md)
-index.html              Portada de la versión estática
+vercel.json             Le dice a Vercel que construya web/
+legacy/                 Versión estática anterior, sin build
+legacy/index.html       Portada de la versión estática
 mapa.html               Mapa esquemático + geográfico
 estacion.html           Ficha de estación (?id=…)
 manifest.webmanifest    Configuración PWA

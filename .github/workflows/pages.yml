@@ -40,7 +40,7 @@ jobs:
       - name: Añadir la versión estática en /clasico
         run: |
           mkdir -p web/out/clasico
-          cp -r index.html mapa.html estacion.html manifest.webmanifest sw.js robots.txt assets web/out/clasico/
+          cp -r legacy/. web/out/clasico/
           # GitHub Pages ignora las carpetas que empiezan por guion bajo (_next)
           touch web/out/.nojekyll
 
