@@ -69,8 +69,16 @@ export default function MetroMap({
   const trainRef = useRef<Marker | null>(null);
   const userRef = useRef<Marker | null>(null);
 
+  /* La ruta cambia; el handler que se expone fuera debe leer la actual */
+  const routeRef = useRef(routeStations);
+  routeRef.current = routeStations;
+
   const [tilesFailed, setTilesFailed] = useState(false);
   const [zoom, setZoom] = useState(11);
+  /* El mapa se crea tras un import dinámico, es decir, después del primer
+     render. Sin este estado los efectos que dibujan capas se ejecutarían una
+     sola vez, cuando `mapRef` todavía está vacío, y no volverían a correr. */
+  const [mapReady, setMapReady] = useState(false);
 
   /* ------------------------------------------------- crear el mapa una vez */
   useEffect(() => {
@@ -98,6 +106,7 @@ export default function MetroMap({
       L.control.zoom({ position: "topright" }).addTo(map);
       setZoom(map.getZoom());
       map.on("zoomend", () => setZoom(map.getZoom()));
+      setMapReady(true);
 
       /* Línea completa en gris, siempre visible por debajo */
       baseLineRef.current = L.polyline(
@@ -138,7 +147,7 @@ export default function MetroMap({
 
       onReady?.({
         fitRoute: () => {
-          const pts = routeStations.map((s) => [s.latitude, s.longitude] as LatLng);
+          const pts = routeRef.current.map((s) => [s.latitude, s.longitude] as LatLng);
           if (pts.length) map.fitBounds(pts, { padding: [90, 90], maxZoom: 13.5 });
         },
         fitAll: () =>
@@ -172,14 +181,14 @@ export default function MetroMap({
       });
       L.marker(avenueAnchor(avenue), { icon, interactive: false, keyboard: false }).addTo(layer);
     });
-  }, [tilesFailed]);
+  }, [mapReady]);
 
   /* ------------------------------------------------ polilíneas de la ruta */
   useEffect(() => {
     const toPath = (list: Station[]) => list.map((s) => [s.latitude, s.longitude] as LatLng);
     outboundRef.current?.setLatLngs(toPath(outboundStations));
     inboundRef.current?.setLatLngs(inboundStations ? toPath(inboundStations) : []);
-  }, [outboundStations, inboundStations]);
+  }, [mapReady, outboundStations, inboundStations]);
 
   /* --------------------------------------------------- tramo ya recorrido */
   useEffect(() => {
@@ -195,7 +204,7 @@ export default function MetroMap({
         .map((s) => [s.latitude, s.longitude] as LatLng),
     );
     travelled.setStyle({ color: trainVariant === "ida" ? VERDE_OSCURO : "#0b63c5" });
-  }, [routeStations, visitedCount, trainVisible, trainVariant]);
+  }, [mapReady, routeStations, visitedCount, trainVisible, trainVariant]);
 
   /* ---------------------------------------------- marcadores de estación */
   useEffect(() => {
@@ -259,6 +268,7 @@ export default function MetroMap({
       });
     });
   }, [
+    mapReady,
     routeStations,
     visitedCount,
     trainVisible,
@@ -316,7 +326,7 @@ export default function MetroMap({
     /* El tren se mueve suscrito al MotionValue: sin renders de React por frame */
     const unsubscribe = position.on("change", render);
     return () => unsubscribe();
-  }, [routeStations, trainVisible, trainVariant, position, onTrainClick]);
+  }, [mapReady, routeStations, trainVisible, trainVariant, position, onTrainClick]);
 
   /* -------------------------------------------------- ubicación del usuario */
   useEffect(() => {
@@ -337,7 +347,7 @@ export default function MetroMap({
     userRef.current = L.marker([userLocation.latitude, userLocation.longitude], { icon })
       .addTo(map)
       .bindTooltip("Estás aquí");
-  }, [userLocation]);
+  }, [mapReady, userLocation]);
 
   /* ------------------------------------------------- reencuadre de la ruta */
   useEffect(() => {

@@ -36,8 +36,7 @@ export function Hero() {
           src="/img/tren.webp"
           alt="Tren de la Línea 1 del Metro de Lima"
           fill
-          priority
-          sizes="600px"
+          sizes="(max-width: 768px) 0px, 600px"
           className="object-contain object-bottom-right"
         />
       </motion.div>
